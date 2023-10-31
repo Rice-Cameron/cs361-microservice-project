@@ -5,6 +5,7 @@ import sys
 import getpass
 import hashlib
 
+
 # Assuming you have a list to store code snippets
 code_snippets = []
 
