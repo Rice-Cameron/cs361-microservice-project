@@ -10,37 +10,37 @@ import hashlib
 code_snippets = []
 
 
-def hash_pass(password):
-    sha256 = hashlib.sha256()
-    sha256.update(password.encode('utf-8'))
-    hashed_password = sha256.hexdigest()
-    return hashed_password
+# def hash_pass(password):
+#     sha256 = hashlib.sha256()
+#     sha256.update(password.encode('utf-8'))
+#     hashed_password = sha256.hexdigest()
+#     return hashed_password
 
 
-def login():
-    username = input("Username: ")
-    password = getpass.getpass("Password: ")
-    return username, password
+# def login():
+#     username = input("Username: ")
+#     password = getpass.getpass("Password: ")
+#     return username, password
 
 
-def auth(username, password):
-    with open('users.txt', 'r') as file:
-        for line in file:
-            store_uname, store_pass = line.strip().split(':')
-            if username == store_uname and hash_pass(password) == store_pass:
-                return True
-    return False
+# def auth(username, password):
+#     with open('users.txt', 'r') as file:
+#         for line in file:
+#             store_uname, store_pass = line.strip().split(':')
+#             if username == store_uname and hash_pass(password) == store_pass:
+#                 return True
+#     return False
 
 
-def register():
-    username = input("New Username: ")
-    password = getpass.getpass("New Password: ")
-
-    # Hash the password before storing
-    hashed_password = hash_pass(password)
-
-    with open('users.txt', 'a') as file:
-        file.write(f'{username}:{hashed_password}\n')
+# def register():
+#     username = input("New Username: ")
+#     password = getpass.getpass("New Password: ")
+#
+#     # Hash the password before storing
+#     hashed_password = hash_pass(password)
+#
+#     with open('users.txt', 'a') as file:
+#         file.write(f'{username}:{hashed_password}\n')
 
 
 def add_code_snippet():
@@ -190,14 +190,14 @@ def main_menu():
 
 def main():
     print("Welcome to Code Snippet Manager CLI")
+    main_menu()
+    # while True:
+    #     username, password = login()
+    #     if auth(username, password):
+    #         print(f"Welcome, {username}!")
 
-    while True:
-        username, password = login()
-        if auth(username, password):
-            print(f"Welcome, {username}!")
-            main_menu()
-        else:
-            print("Invalid credentials. Please try again.")
+        # else:
+        #     print("Invalid credentials. Please try again.")
 
 
 if __name__ == '__main__':
