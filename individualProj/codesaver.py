@@ -5,7 +5,6 @@ import sys
 import getpass
 import hashlib
 
-
 # Assuming you have a list to store code snippets
 code_snippets = []
 
@@ -47,6 +46,10 @@ def add_code_snippet():
     print("-----------------------------------------------")
     print("Add New Code Snippet")
     print("-----------------------------------------------")
+    snippet_data = {"title": input("Enter a title: "), "language": input("Enter a language: "),
+                    "content": input("Enter the content: ")}
+
+    # Send to microservice
 
 
 def view_code_snippets():
@@ -54,11 +57,15 @@ def view_code_snippets():
     print("List of Code Snippets")
     print("-----------------------------------------------")
 
+    # Request microservice to get list of snippets
+
 
 def edit_code_snippet():
     print("-----------------------------------------------")
     print("Edit Code Snippet")
     print("-----------------------------------------------")
+
+    # Request microservice to open specific snippet and edit contents
 
 
 def delete_code_snippet():
@@ -66,11 +73,15 @@ def delete_code_snippet():
     print("Delete Code Snippet")
     print("-----------------------------------------------")
 
+    # Request microservice to remove specific snippet
+
 
 def search_code_snippet():
     print("-----------------------------------------------")
     print("Search for Code Snippet")
     print("-----------------------------------------------")
+
+    # Request microservice to return specific snippet
 
 
 def tag_code_snippet():
@@ -196,8 +207,8 @@ def main():
     #     if auth(username, password):
     #         print(f"Welcome, {username}!")
 
-        # else:
-        #     print("Invalid credentials. Please try again.")
+    # else:
+    #     print("Invalid credentials. Please try again.")
 
 
 if __name__ == '__main__':
