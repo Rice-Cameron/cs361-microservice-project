@@ -11,6 +11,9 @@
 
 import getpass
 import hashlib
+import socket
+
+IP, DPORT = 'localhost', 8080
 
 
 def hash_pass(password):
