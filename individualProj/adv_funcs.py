@@ -4,6 +4,12 @@
 # About: Definitions for search, tag, export, and import
 #        Defs used when "called' upon via microservice
 
+
+from send_recv import send_data, recv_data, to_hex
+
+import socket
+
+
 def search_code_snippet():
     print("-----------------------------------------------")
     print("Search for Code Snippet")
@@ -26,4 +32,3 @@ def import_code_snippets():
     print("-----------------------------------------------")
     print("Import Code Snippets")
     print("-----------------------------------------------")
-

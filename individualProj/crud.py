@@ -1,3 +1,13 @@
+# Cameron Rice
+# ricecam@oregonstate.edu
+
+from send_recv import send_data, recv_data, to_hex
+
+import socket
+
+IP, DPORT = 'localhost', 8080
+
+
 def add_code_snippet():
     print("-----------------------------------------------")
     print("Add New Code Snippet")

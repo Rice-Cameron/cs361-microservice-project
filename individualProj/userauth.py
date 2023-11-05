@@ -8,6 +8,7 @@
 #           code snippets? Do via attaching an id to users and that same
 #           id to the snippets that they create.
 
+from send_recv import send_data, recv_data, to_hex
 
 import getpass
 import hashlib
@@ -48,15 +49,15 @@ def register():
     with open('users.txt', 'a') as file:
         file.write(f'{username}:{hashed_password}\n')
 
+
 def main():
     print("Welcome to Code Snippet Manager CLI")
     while True:
         username, password = login()
         if auth(username, password):
             print(f"Welcome, {username}!")
-
-    else:
-        print("Invalid credentials. Please try again.")
+        else:
+            print("Invalid credentials. Please try again.")
 
 
 if __name__ == '__main__':

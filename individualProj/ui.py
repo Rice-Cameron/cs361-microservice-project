@@ -5,26 +5,11 @@
 #        "Called" by microservice after user auth is verified
 #        sockets will be used to communicate with microservice
 
-import sys
+from send_recv import send_data, recv_data, to_hex
+
 import socket
 
 IP, DPORT = 'localhost', 8080
-
-
-def to_hex(number):
-    assert number <= 0xffffffff, "Number too large to convert to hex"
-    return "{:08x}".format(number)
-
-
-def send_to_microservice(command):
-    # send command to microservice via socket
-    # for now, just show that the command is making it to this function which will then somehow
-    # send it to the microservice in which will figure out what file to open and what function to call
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as conn:
-        conn.connect((IP, int(DPORT)))
-        print(f"== Sending {command} to microservice")
-        conn.sendall(to_hex(len(command)).encode())
-        conn.sendall(command.encode())
 
 
 def show_help_menu():
@@ -102,14 +87,14 @@ def display_main_menu():
 # Define a dictionary mapping commands to their respective functions
 
 command_functions = {
-    "add": lambda: send_to_microservice("add"),
-    "view": lambda: send_to_microservice("view"),
-    "edit": lambda: send_to_microservice("edit"),
-    "delete": lambda: send_to_microservice("delete"),
-    "search": lambda: send_to_microservice("search"),
-    "tag": lambda: send_to_microservice("tag"),
-    "export": lambda: send_to_microservice("export"),
-    "import": lambda: send_to_microservice("import"),
+    "add": lambda: send_data("add"),
+    "view": lambda: send_data("view"),
+    "edit": lambda: send_data("edit"),
+    "delete": lambda: send_data("delete"),
+    "search": lambda: send_data("search"),
+    "tag": lambda: send_data("tag"),
+    "export": lambda: send_data("export"),
+    "import": lambda: send_data("import"),
     "help": show_help_menu,
     "exit": exit_program
 }
@@ -122,6 +107,8 @@ def main():
 
         if user_input in command_functions:
             command_functions[user_input]()
+            # Sleep here?
+            recv_data()
         else:
             print("Invalid command. Please try again.")
 
