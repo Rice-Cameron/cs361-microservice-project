@@ -4,17 +4,10 @@
 # About: User authentication so that users can access
 #           their snippets and only their snippets.
 
-# TODO: Maybe use a database to be able to assocaiate users with specific
-#           code snippets? Do via attaching an id to users and that same
-#           id to the snippets that they create.
-
 from send_recv import send_data, recv_data, to_hex
 
 import getpass
 import hashlib
-import socket
-
-IP, DPORT = 'localhost', 8080
 
 
 def hash_pass(password):

@@ -1,6 +1,5 @@
 # Cameron Rice
 # ricecam@oregonstate.edu
-import this
 
 from send_recv import send_data, recv_data, to_hex
 
@@ -14,7 +13,7 @@ IP, DPORT = 'localhost', 8080
 def add_code_snippet():
     print("-----------------------------------------------")
     print("Add New Code Snippet")
-    print("-------Æ----------------------------------------")
+    print("-----------------------------------------------")
     snippet = Snippet()
     snippet.snippet_id = len(Database.code_snippets) + 1
     snippet.title = input("== Title: ")
@@ -164,33 +163,59 @@ def delete_code_snippet():
     print("-----------------------------------------------")
     print("Delete Code Snippet")
     print("-----------------------------------------------")
-    print("Select a Code Snippet to Delete")
+    print("Select a Code Snippet to Delete or delete all")
     print("-----------------------------------------------")
-    snippet_id = int(input("== Snippet ID: "))
-    snippet = Database.get_snippet(snippet_id)
-    print("-----------------------------------------------")
-    print(f"== {snippet.title} [{snippet.language}]")
-    print("-----------------------------------------------")
-    print(snippet.content)
-    print("-----------------------------------------------")
-    print(f"Tags: {snippet.tags}")
-    print("-----------------------------------------------")
-    print("Are you sure you want to delete this code snippet?")
-    print("-----------------------------------------------")
-    print("[1] Yes")
-    print("[2] No")
+    print("[1] Delete All")
+    print("[2] Delete One")
+    print("[3] Return to Main Menu")
     print("-----------------------------------------------")
     delete_choice = int(input("== Select an option: "))
     if delete_choice == 1:
-        Database.delete_snippet(snippet)
+        print("-----------------------------------------------")
+        print("Are you sure you want to delete all code snippets?")
+        print("-----------------------------------------------")
+        print("[1] Yes")
+        print("[2] No")
+        print("-----------------------------------------------")
+        delete_choice = int(input("== Select an option: "))
+        if delete_choice == 1:
+            Database.delete_all()
+            print("-----------------------------------------------")
+            print("All code snippets deleted successfully!")
+            print("-----------------------------------------------")
+            # send message to microservice to reprint main menu in ui.py
+            send_data(to_hex("All code snippets deleted successfully!"))
+        elif delete_choice == 2:
+            print("-----------------------------------------------")
+            print("Returning to Main Menu")
+            print("-----------------------------------------------")
+            # send message to microservice to reprint main menu in ui.py
+            send_data(to_hex("Returning to Main Menu"))
+    elif delete_choice == 2:
+        print("-----------------------------------------------")
+        print("Select a Code Snippet to Delete")
+        print("-----------------------------------------------")
+        snippet_id = int(input("== Snippet ID: "))
+        Database.delete_snippet(snippet_id)
         print("-----------------------------------------------")
         print("Code snippet deleted successfully!")
         print("-----------------------------------------------")
         # send message to microservice to reprint main menu in ui.py
         send_data(to_hex("Code snippet deleted successfully!"))
-    elif delete_choice == 2:
+    elif delete_choice == 3:
         print("-----------------------------------------------")
         print("Returning to Main Menu")
         print("-----------------------------------------------")
         # send message to microservice to reprint main menu in ui.py
         send_data(to_hex("Returning to Main Menu"))
+    else:
+        print("-----------------------------------------------")
+        print("Invalid option selected, returning to main menu")
+        print("-----------------------------------------------")
+        # send message to microservice to reprint main menu in ui.py
+        send_data(to_hex("Invalid option selected, returning to main menu"))
+
+
+
+
+

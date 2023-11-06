@@ -12,3 +12,6 @@ class Database:
 
     def get_snippet(id):
         return Database.code_snippets[Snippet.get_snippet_id(id)]
+
+    def delete_all(self):
+        Database.code_snippets.clear()
