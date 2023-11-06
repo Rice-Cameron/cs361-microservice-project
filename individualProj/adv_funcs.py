@@ -8,6 +8,8 @@
 from send_recv import send_data, recv_data, to_hex
 
 import socket
+import Snippet
+import Database
 
 
 def search_code_snippet():

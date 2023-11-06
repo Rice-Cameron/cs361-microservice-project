@@ -4,6 +4,8 @@
 from send_recv import send_data, recv_data, to_hex
 
 import socket
+import Snippet
+import Database
 
 INTERFACE, SPORT = 'localhost', 8080
 CHUNK = 100

@@ -1,4 +1,9 @@
+# Cameron Rice
+# ricecam@oregonstate.edu
+
 import socket
+import Snippet
+import Database
 
 IP, DPORT = 'localhost', 8080
 CHUNK = 100
