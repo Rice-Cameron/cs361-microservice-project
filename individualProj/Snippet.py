@@ -1,3 +1,6 @@
+# Cameron Rice
+# ricecam@oregonstate.edu
+
 class CodeSnippet:
     def __init__(self, snippet_id, title, language, content, tags=None):
         self.snippet_id = snippet_id

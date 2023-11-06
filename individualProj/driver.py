@@ -30,6 +30,8 @@ def auth_verified():
     send_to_microservice("main_menu")
     print("== Getting response from microservice")
     get_from_microservice()
+
+
 # If auth is denied, then exit program
 def auth_denied():
     print("== Auth denied")

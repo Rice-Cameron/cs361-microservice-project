@@ -32,9 +32,10 @@ def search_code_snippet():
         print("-----------------------------------------------")
         search_title = input("== Enter a title to search for: ")
         # send title to microservice
-        send_data(to_hex(search_title))
+        # send_data(to_hex(search_title))
         # receive snippet from microservice
-        snippet = recv_data()
+        #snippet = recv_data()
+        snippet = Snippet()
         print("-----------------------------------------------")
         print(f"== {snippet.title} [{snippet.language}]")
         print("-----------------------------------------------")
@@ -46,9 +47,10 @@ def search_code_snippet():
         print("-----------------------------------------------")
         search_lang = input("== Enter a language to search for: ")
         # send lang to microservice
-        send_data(to_hex(search_lang))
+        # send_data(to_hex(search_lang))
         # receive snippet from microservice
-        snippet = recv_data()
+        #snippet = recv_data()
+        snippet = Snippet()
         print("-----------------------------------------------")
         print(f"== {snippet.title} [{snippet.language}]")
         print("-----------------------------------------------")
@@ -60,9 +62,10 @@ def search_code_snippet():
         print("-----------------------------------------------")
         search_content = input("== Enter content to search for: ")
         # send content to microservice
-        send_data(to_hex(search_content))
+        # send_data(to_hex(search_content))
         # receive snippet from microservice
-        snippet = recv_data()
+        #snippet = recv_data()
+        snippet = Snippet()
         print("-----------------------------------------------")
         print(f"== {snippet.title} [{snippet.language}]")
         print("-----------------------------------------------")
@@ -74,9 +77,10 @@ def search_code_snippet():
         print("-----------------------------------------------")
         search_tag = input("== Enter a tag to search for: ")
         # send tag to microservice
-        send_data(to_hex(search_tag))
+        # send_data(to_hex(search_tag))
         # receive snippet from microservice
-        snippet = recv_data()
+        #snippet = recv_data()
+        snippet = Snippet()
         print("-----------------------------------------------")
         print(f"== {snippet.title} [{snippet.language}]")
         print("-----------------------------------------------")
@@ -89,13 +93,13 @@ def search_code_snippet():
         print("Returning to Main Menu")
         print("-----------------------------------------------")
         # send main menu request to microservice
-        send_data(to_hex("Returning to Main Menu"))
+        # send_data(to_hex("Returning to Main Menu"))
     else:
         print("-----------------------------------------------")
         print("Invalid input, please try again")
         print("-----------------------------------------------")
         # send invalid input to microservice
-        send_data(to_hex("Invalid input, please try again"))
+        # send_data(to_hex("Invalid input, please try again"))
 
 
 def tag_code_snippet():
@@ -109,12 +113,13 @@ def tag_code_snippet():
     # What tag would you like to add to the snippet?
     tag = input("== Enter the tag you would like to add to the snippet: ")
     # send id and tag to microservice
-    send_data(to_hex(id))
-    send_data(to_hex(tag))
+    # send_data(to_hex(id))
+    # send_data(to_hex(tag))
     # receive confirmation from microservice
-    confirmation = recv_data()
+    #confirmation = recv_data()
     print("-----------------------------------------------")
-    print(confirmation)
+    #print(confirmation)
+    print("test confirmation")
     print("-----------------------------------------------")
 
 
@@ -138,47 +143,49 @@ def export_code_snippets():
         export_all_choice = int(input("== Select an option: "))
         if export_all_choice == 1:
             # send export all request to microservice
-            send_data(to_hex("Export all"))
+            # send_data(to_hex("Export all"))
             # receive confirmation from microservice
-            confirmation = recv_data()
+            #confirmation = recv_data()
             print("-----------------------------------------------")
-            print(confirmation)
+            # print(confirmation)
+            print("test confirmation")
             print("-----------------------------------------------")
         elif export_all_choice == 2:
             print("-----------------------------------------------")
             print("Returning to Export Code Snippets Menu")
             print("-----------------------------------------------")
             # send return to export menu request to microservice
-            send_data(to_hex("Returning to Export Code Snippets Menu"))
+            # send_data(to_hex("Returning to Export Code Snippets Menu"))
         else:
             print("-----------------------------------------------")
             print("Invalid input, please try again")
             print("-----------------------------------------------")
             # send invalid input to microservice
-            send_data(to_hex("Invalid input, please try again"))
+            # send_data(to_hex("Invalid input, please try again"))
     elif export_choice == 2:
         # Ask user what snippet they would like to export
         print("-----------------------------------------------")
         export_id = input("== Enter the id of the snippet you would like to export: ")
         # send export id to microservice
-        send_data(to_hex(export_id))
+        # send_data(to_hex(export_id))
         # receive confirmation from microservice
-        confirmation = recv_data()
+        # confirmation = recv_data()
         print("-----------------------------------------------")
-        print(confirmation)
+        # print(confirmation)
+        print("test confirmation")
         print("-----------------------------------------------")
     elif export_choice == 3:
         print("-----------------------------------------------")
         print("Returning to Main Menu")
         print("-----------------------------------------------")
         # send main menu request to microservice
-        send_data(to_hex("Returning to Main Menu"))
+        # send_data(to_hex("Returning to Main Menu"))
     else:
         print("-----------------------------------------------")
         print("Invalid input, please try again")
         print("-----------------------------------------------")
         # send invalid input to microservice
-        send_data(to_hex("Invalid input, please try again"))
+        # send_data(to_hex("Invalid input, please try again"))
 
 
 def import_code_snippets():
@@ -197,9 +204,10 @@ def import_code_snippets():
         data = file.read()
         # file formatted as id, title, language, content, tags, delimited with ;
         # Package all of the snippets in a dictionary and send to microservice
-        send_data(to_hex(data))
+        # send_data(to_hex(data))
         # receive confirmation from microservice
-        confirmation = recv_data()
+        #confirmation = recv_data()
         print("-----------------------------------------------")
-        print(confirmation)
+        # print(confirmation)
+        print("test confirmation")
         print("-----------------------------------------------")
