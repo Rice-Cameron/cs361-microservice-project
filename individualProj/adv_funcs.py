@@ -194,8 +194,8 @@ def import_code_snippets():
     print("-----------------------------------------------")
     print("Before you proceed, make sure the file you are attempting to import follows the following requirements: ")
     print("1. The file must be in your current working directory")
-    print("2. The file must be formatted as such: id,title,language,content,tags;(second snippet;(third snippet);")
-    print("Note: Each snippet must be delimited by a semicolon (;) and the attributes are separated by a comma (,)")
+    print("2. The file must be in JSON format as such: {'snippet_id': {'title': title, 'language': language, "
+          "'content': content, 'tags': tags}}")
     print("-----------------------------------------------")
     print("Please enter the file name of the file you would like to import:")
     file_name = input("== Enter the file name: ")

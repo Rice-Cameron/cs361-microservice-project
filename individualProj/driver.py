@@ -1,8 +1,6 @@
 # Cameron Rice
 # ricecam@oregonstate.edu
 
-# About: Initial program. Run this to start the program.
-
 import sys
 
 

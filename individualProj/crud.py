@@ -4,6 +4,7 @@
 from send_recv import send_data, recv_data, to_hex
 
 import socket
+import json
 from Database import Database
 from Snippet import CodeSnippet as Snippet
 
@@ -19,7 +20,8 @@ def add_code_snippet():
     language = input("== Language: ")
     content = input("== Content: ")
     tags = input("== Tags: ")
-    snippet = Snippet(snippet_id, title, language, content, tags)
+    snippet_string = '{"snippet_id": ' + str(snippet_id) + ', "title": "' + title + '", "language": "' + language + '", "content": "' + content + '", "tags": "' + tags + '"}'
+    snippet = json.loads(snippet_string)
     Database.add_snippet(snippet)
     # send success message to microservice
     # send_data(to_hex(f"Code snippet {snippet.snippet_id} added successfully!"))
