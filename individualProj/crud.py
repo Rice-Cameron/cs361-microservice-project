@@ -10,17 +10,21 @@ from Snippet import CodeSnippet as Snippet
 
 IP, DPORT = 'localhost', 8080
 
+# initialize database
+db = Database()
+
 
 def add_code_snippet():
     print("-----------------------------------------------")
     print("Add New Code Snippet")
     print("-----------------------------------------------")
-    snippet_id = len(Database.code_snippets) + 1
+    snippet_id = len(Database.get_length(db)) + 1
     title = input("== Title: ")
     language = input("== Language: ")
     content = input("== Content: ")
     tags = input("== Tags: ")
-    snippet_string = '{"snippet_id": ' + str(snippet_id) + ', "title": "' + title + '", "language": "' + language + '", "content": "' + content + '", "tags": "' + tags + '"}'
+    snippet_string = ('{"snippet_id": ' + str(snippet_id) + ', "title": "' + title + '", "language": "' + language +
+                      '", "content": "' + content + '", "tags": "' + tags + '"}')
     snippet = json.loads(snippet_string)
     Database.add_snippet(snippet)
     # send success message to microservice
@@ -31,22 +35,46 @@ def view_code_snippets():
     print("-----------------------------------------------")
     print("List of Code Snippets")
     print("-----------------------------------------------")
-    for snippet in Database.code_snippets:
-        print(f"== {snippet.snippet_id}: {snippet.title} [{snippet.language}]")
+    # ask user if they would like to view all or just one
+    print("View:")
+    print("[1] All")
+    print("[2] One")
+    print("[3] Return to Main Menu")
     print("-----------------------------------------------")
-    print("Select a Code Snippet to View")
-    print("-----------------------------------------------")
-    snippet_id = int(input("== Snippet ID: "))
-    snippet = Database.get_snippet(snippet_id)
-    # send snippet to microservice
-    # send_data(to_hex(snippet))
-    # print("-----------------------------------------------")
-    # print(f"== {snippet.title} [{snippet.language}]")
-    # print("-----------------------------------------------")
-    # print(snippet.content)
-    # print("-----------------------------------------------")
-    # print(f"Tags: {snippet.tags}")
-    # print("-----------------------------------------------")
+    view_choice = int(input("== Select an option: "))
+    if view_choice == 1:
+        # print contents from snippet.json
+        snippets = Database.get_all(db)
+        db.code_snippets = snippets
+        for snippet in db.code_snippets:
+            print(f"== {snippet.title} [{snippet.language}]")
+            print("-----------------------------------------------")
+            print(snippet.content)
+            print("-----------------------------------------------")
+            print(f"Tags: {snippet.tags}")
+            print("-----------------------------------------------")
+    elif view_choice == 2:
+        print("-----------------------------------------------")
+        print("Enter the ID of the Code Snippet You Would Like to View")
+        print("-----------------------------------------------")
+        snippet_id = int(input("== Snippet ID: "))
+        # return the snippet object with the given id
+        snippet = Database.get_snippet(db, snippet_id)
+        print("-----------------------------------------------")
+        print(f"== {snippet.title} [{snippet.language}]")
+        print("-----------------------------------------------")
+        print(snippet.content)
+        print("-----------------------------------------------")
+        print(f"Tags: {snippet.tags}")
+        print("-----------------------------------------------")
+    elif view_choice == 3:
+        print("-----------------------------------------------")
+        print("Returning to Main Menu")
+        print("-----------------------------------------------")
+        # send message to microservice to reprint main menu in ui.py
+        # send_data(to_hex("Returning to Main Menu"))
+    # confirm to microservice
+
 
 
 def edit_code_snippet():

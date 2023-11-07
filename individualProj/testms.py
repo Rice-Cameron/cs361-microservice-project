@@ -7,7 +7,7 @@
 from send_recv import send_data, recv_data, to_hex
 
 import socket
-import Snippet
+from Snippet import CodeSnippet as Snippet
 import Database
 
 INTERFACE, SPORT = 'localhost', 8080
@@ -25,7 +25,7 @@ def main():
             conn, addr = microservice_sock.accept()
             with conn:
                 print(f"== Received connection from {addr}")
-                command = recv_data(conn)
+                command = recv_data()
                 print(f"== Received command: {command}")
                 send_data("test send")
                 print(f"== Sent results to client")
