@@ -4,6 +4,7 @@
 from send_recv import send_data, recv_data, to_hex
 
 import socket
+import json
 from Database import Database
 from Snippet import CodeSnippet as Snippet
 
@@ -14,15 +15,16 @@ def add_code_snippet():
     print("-----------------------------------------------")
     print("Add New Code Snippet")
     print("-----------------------------------------------")
-    snippet = Snippet()
-    snippet.snippet_id = len(Database.code_snippets) + 1
-    snippet.title = input("== Title: ")
-    snippet.language = input("== Language: ")
-    snippet.content = input("== Content: ")
-    snippet.tags = input("== Tags: ")
+    snippet_id = len(Database.code_snippets) + 1
+    title = input("== Title: ")
+    language = input("== Language: ")
+    content = input("== Content: ")
+    tags = input("== Tags: ")
+    snippet_string = '{"snippet_id": ' + str(snippet_id) + ', "title": "' + title + '", "language": "' + language + '", "content": "' + content + '", "tags": "' + tags + '"}'
+    snippet = json.loads(snippet_string)
     Database.add_snippet(snippet)
     # send success message to microservice
-    send_data(to_hex(f"Code snippet {snippet.snippet_id} added successfully!"))
+    # send_data(to_hex(f"Code snippet {snippet.snippet_id} added successfully!"))
 
 
 def view_code_snippets():
@@ -37,7 +39,7 @@ def view_code_snippets():
     snippet_id = int(input("== Snippet ID: "))
     snippet = Database.get_snippet(snippet_id)
     # send snippet to microservice
-    send_data(to_hex(snippet))
+    # send_data(to_hex(snippet))
     # print("-----------------------------------------------")
     # print(f"== {snippet.title} [{snippet.language}]")
     # print("-----------------------------------------------")
@@ -54,13 +56,17 @@ def edit_code_snippet():
     print("Select a Code Snippet to Edit")
     print("-----------------------------------------------")
     snippet_id = int(input("== Snippet ID: "))
-    snippet = Database.get_snippet(snippet)
+    # return the snippet object with the given id
+    snippet = Database.get_snippet(snippet_id)
     print("-----------------------------------------------")
-    print(f"== {snippet.title} [{snippet.language}]")
+    # print(f"== {snippet.title} [{snippet.language}]")
+    print("== Test tile [Test lang]")
     print("-----------------------------------------------")
-    print(snippet.content)
+    # print(snippet.content)
+    print("Test content")
     print("-----------------------------------------------")
-    print(f"Tags: {snippet.tags}")
+    # print(f"Tags: {snippet.tags}")
+    print("Test tags")
     print("-----------------------------------------------")
     print("Edit Menu")
     print("-----------------------------------------------")
@@ -74,13 +80,16 @@ def edit_code_snippet():
     if edit_choice == 1:
         print("-----------------------------------------------")
         new_title = input("== Enter a new title: ")
-        snippet.title = new_title
+        # snippet.title = new_title
         print("-----------------------------------------------")
-        print(f"== {snippet.title} [{snippet.language}]")
+        # print(f"== {snippet.title} [{snippet.language}]")
+        print(f"== {new_title} [Lang]")
         print("-----------------------------------------------")
-        print(snippet.content)
+        # print(snippet.content)
+        print("Test content")
         print("-----------------------------------------------")
-        print(f"Tags: {snippet.tags}")
+        # print(f"Tags: {snippet.tags}")
+        print("Test tags")
         print("-----------------------------------------------")
         print("Edit Menu")
         print("-----------------------------------------------")
@@ -94,13 +103,15 @@ def edit_code_snippet():
     elif edit_choice == 2:
         print("-----------------------------------------------")
         new_language = input("== Enter a new language: ")
-        snippet.language = new_language
+        # snippet.language = new_language
         print("-----------------------------------------------")
-        print(f"== {snippet.title} [{snippet.language}]")
+        # print(f"== {snippet.title} [{snippet.language}]")
+        print(f"== Test title [{new_language}]")
         print("-----------------------------------------------")
-        print(snippet.content)
+        # print(snippet.content)
         print("-----------------------------------------------")
-        print(f"Tags: {snippet.tags}")
+        # print(f"Tags: {snippet.tags}")
+        print("Test tags")
         print("-----------------------------------------------")
         print("Edit Menu")
         print("-----------------------------------------------")
@@ -114,13 +125,16 @@ def edit_code_snippet():
     elif edit_choice == 3:
         print("-----------------------------------------------")
         new_content = input("== Enter new content: ")
-        snippet.content = new_content
+        # snippet.content = new_content
         print("-----------------------------------------------")
-        print(f"== {snippet.title} [{snippet.language}]")
+        # print(f"== {snippet.title} [{snippet.language}]")
+        print(f"== Test title [Test lang]")
         print("-----------------------------------------------")
-        print(snippet.content)
+        # print(snippet.content)
+        print(f"== {new_content}")
         print("-----------------------------------------------")
-        print(f"Tags: {snippet.tags}")
+        # print(f"Tags: {snippet.tags}")
+        print("Test tags")
         print("-----------------------------------------------")
         print("Edit Menu")
         print("-----------------------------------------------")
@@ -134,13 +148,16 @@ def edit_code_snippet():
     elif edit_choice == 4:
         print("-----------------------------------------------")
         new_tags = input("== Enter new tags: ")
-        snippet.tags = new_tags
+        # snippet.tags = new_tags
         print("-----------------------------------------------")
-        print(f"== {snippet.title} [{snippet.language}]")
+        # print(f"== {snippet.title} [{snippet.language}]")
+        print(f"== Test title [Test lang]")
         print("-----------------------------------------------")
-        print(snippet.content)
+        # print(snippet.content)
+        print("Test content")
         print("-----------------------------------------------")
-        print(f"Tags: {snippet.tags}")
+        # print(f"Tags: {snippet.tags}")
+        print(f"Tags: {new_tags}")
         print("-----------------------------------------------")
         print("Edit Menu")
         print("-----------------------------------------------")
@@ -156,7 +173,7 @@ def edit_code_snippet():
         print("Returning to Main Menu")
         print("-----------------------------------------------")
         # send message to microservice to reprint main menu in ui.py
-        send_data(to_hex("Returning to Main Menu"))
+        # send_data(to_hex("Returning to Main Menu"))
 
 
 def delete_code_snippet():
@@ -179,43 +196,55 @@ def delete_code_snippet():
         print("-----------------------------------------------")
         delete_choice = int(input("== Select an option: "))
         if delete_choice == 1:
-            Database.delete_all()
+            # Database.delete_all()
             print("-----------------------------------------------")
             print("All code snippets deleted successfully!")
             print("-----------------------------------------------")
             # send message to microservice to reprint main menu in ui.py
-            send_data(to_hex("All code snippets deleted successfully!"))
+            # send_data(to_hex("All code snippets deleted successfully!"))
         elif delete_choice == 2:
             print("-----------------------------------------------")
             print("Returning to Main Menu")
             print("-----------------------------------------------")
             # send message to microservice to reprint main menu in ui.py
-            send_data(to_hex("Returning to Main Menu"))
+            # send_data(to_hex("Returning to Main Menu"))
     elif delete_choice == 2:
         print("-----------------------------------------------")
         print("Select a Code Snippet to Delete")
         print("-----------------------------------------------")
-        snippet_id = int(input("== Snippet ID: "))
-        Database.delete_snippet(snippet_id)
+        # snippet_id = int(input("== Snippet ID: "))
+        # Database.delete_snippet(snippet_id)
         print("-----------------------------------------------")
         print("Code snippet deleted successfully!")
         print("-----------------------------------------------")
         # send message to microservice to reprint main menu in ui.py
-        send_data(to_hex("Code snippet deleted successfully!"))
+        # send_data(to_hex("Code snippet deleted successfully!"))
     elif delete_choice == 3:
         print("-----------------------------------------------")
         print("Returning to Main Menu")
         print("-----------------------------------------------")
         # send message to microservice to reprint main menu in ui.py
-        send_data(to_hex("Returning to Main Menu"))
+        # send_data(to_hex("Returning to Main Menu"))
     else:
         print("-----------------------------------------------")
         print("Invalid option selected, returning to main menu")
         print("-----------------------------------------------")
         # send message to microservice to reprint main menu in ui.py
-        send_data(to_hex("Invalid option selected, returning to main menu"))
+        # send_data(to_hex("Invalid option selected, returning to main menu"))
 
 
+def main():
+    # test all above functions
+    add_code_snippet()
+    print("-----------------------------------------------")
+    view_code_snippets()
+    print("-----------------------------------------------")
+    edit_code_snippet()
+    print("-----------------------------------------------")
+    delete_code_snippet()
+    print("-----------------------------------------------")
+    print("End of test")
 
 
-
+if __name__ == "__main__":
+    main()

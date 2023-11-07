@@ -10,6 +10,11 @@ from send_recv import send_data, recv_data, to_hex
 import socket
 import Snippet
 import Database
+import sys
+import os
+import io
+import json
+
 
 IP, DPORT = 'localhost', 8080
 
@@ -103,6 +108,16 @@ command_functions = {
 
 
 def main():
+    db = Database
+    if not os.path.isfile("snippet.json"):
+        with open("snippet.json", "w") as f:
+            f.write("{}")
+    else:
+        with open("snippet.json", "r") as f:
+            data = f.read()
+            if data:
+                db.code_snippets = json.loads(data)
+
     display_main_menu()
     while True:
         user_input = input("\nEnter a command: ")
