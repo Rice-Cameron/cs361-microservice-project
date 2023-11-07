@@ -21,21 +21,21 @@ class Database:
         with open("snippet.json", "a") as f:
             json.dump(self, f)
 
-    def delete_snippet(self):
+    def delete_snippet(self, snippet_id):
         # del Database.code_snippets[Snippet.get_snippet_id(id)]
         print("== Deleting snippet from database")
         with open("snippet.json", "r") as f:
             code_dict = json.load(f)
-            del code_dict[self]
+            del code_dict[snippet_id]
         with open("snippet.json", "w") as f:
             json.dump(code_dict, f)
 
-    def get_snippet(self, id):
+    def get_snippet(self, snippet_id):
         # return Database.code_snippets[Snippet.get_snippet_id(id)]
         print("== Getting snippet from database")
         with open("snippet.json", "r") as f:
             code_dict = json.load(f)
-            return code_dict[id]
+            return code_dict[snippet_id]
 
     def delete_all(self):
         # Database.code_snippets.clear()
