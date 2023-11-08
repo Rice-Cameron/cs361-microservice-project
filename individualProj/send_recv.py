@@ -2,7 +2,7 @@
 # ricecam@oregonstate.edu
 
 import socket
-import Snippet
+#import Snippet
 import Database
 
 IP, DPORT = 'localhost', 8080

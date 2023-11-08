@@ -255,7 +255,7 @@ def delete_code_snippet():
 
 
 def main():
-   print("Test")
+    print("Test")
 
 
 if __name__ == "__main__":
