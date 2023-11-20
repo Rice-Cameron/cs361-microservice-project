@@ -10,7 +10,11 @@ IP, FPORT = 'localhost', 8123
 
 # test function in placement of search, random, explore
 def command():
-    success = "Command function called"
+    # success = "Command function called"
+    success = {
+        "success": True,
+        "message": "Command function called"
+    }
     print(success)
     return success
 
