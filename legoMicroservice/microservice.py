@@ -9,12 +9,11 @@
 # Receive message from LegoProjectUI.py
 
 
+import pickle
 import socket
 from time import sleep
 
-# import importlib
-
-# FPORT = Function Port; MPORT = Main port (your UI or driver file will use MPORT)
+# FPORT = Function Port (funcs.py listens on this); MPORT = Main port (your UI or driver file will connect using MPORT)
 IP, FPORT, MPORT = 'localhost', 8123, 8000
 CHUNK = 100
 
@@ -28,22 +27,24 @@ def to_hex(number):
 
 def send_data(command, conn):
     print(f"== Sending {command}")
-    conn.sendall(to_hex(len(command)).encode())
-    conn.sendall(command.encode())
+    serialized_command = pickle.dumps(command)
+    conn.sendall(to_hex(len(serialized_command)).encode())
+    conn.sendall(serialized_command)
 
 
 def recv_data(conn):
-    print(f"== Receiving data")
+    print("== Receiving command")
     data_length_hex = conn.recv(8, socket.MSG_WAITALL)
     data_length = int(data_length_hex, 16)
-    data = b""
     full_data = b""
     bytes_recv = 0
     while bytes_recv < data_length:
-        data = conn.recv(CHUNK)
+        data = conn.recv(min(data_length - bytes_recv, 4096))
         full_data += data
         bytes_recv += len(data)
-    return full_data.decode()
+
+    deserialized_data = pickle.loads(full_data)
+    return deserialized_data
 
 
 def main():
@@ -71,12 +72,24 @@ def main():
                         # Error: address already in use for the line above
                         print("== In new conn")
                         # send command to function port
-                        send_data(function_to_call, newsocket)
+                        send_data(function_to_call, newsocket) # FIXME. Maybe make string?
                         # receive data from function port
-                        sleep(5)
-                        recv_data(newsocket)
+                        sleep(8)
+                        res = recv_data(newsocket)
                         newsocket.close()
-                print(f"== Sent results to client")
+                        print(f"== Sent results to client")
+                        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as endsocket:
+                            endsocket.connect((IP, int(MPORT)))
+                            sleep(5)
+                            send_data(res, endsocket)
+                            endsocket.close()
+                else:
+                    # Send error to client that command was not found
+                    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as errsocket:
+                        errsocket.connect((IP, int(MPORT)))
+                        send_data("Command not found", errsocket)
+                        sleep(5)
+                        errsocket.close()
                 conn.close()
 
 

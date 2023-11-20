@@ -1,5 +1,6 @@
 # Test client to show how to use the microservice and that it works
 
+import pickle
 import socket
 from time import sleep
 
@@ -12,20 +13,29 @@ def to_hex(number):
     return "{:08x}".format(number)
 
 
-def recv_msg(conn):
+def recv_data(conn):
+    print("== Receiving command")
+    data_length_hex = conn.recv(8, socket.MSG_WAITALL)
+    data_length = int(data_length_hex, 16)
     full_data = b""
-    data = b""
-
-    while data != b'\n':
-        data = conn.recv(1)
+    bytes_recv = 0
+    while bytes_recv < data_length:
+        data = conn.recv(min(data_length - bytes_recv, 4096))
         full_data += data
+        bytes_recv += len(data)
+    if data_length == 1:
+        deserialized_data = pickle.loads(full_data)
+        return deserialized_data
+    else:
+        deserialized_data = pickle.loads(full_data)
+        return deserialized_data
 
-    return full_data.decode()
 
-
-def send_msg(conn, message):
-    conn.sendall(to_hex(len(message)).encode())
-    conn.sendall(message.encode())
+def send_data(conn, command):
+    print("Sending:", command)
+    serialized_data = pickle.dumps(command)
+    conn.sendall(to_hex(len(serialized_data)).encode())
+    conn.sendall(serialized_data)
 
 
 def main():
@@ -39,12 +49,13 @@ def main():
         cmd = input("Enter command: ")
         # send command to microservice
         sleep(3)
-        send_msg(conn, cmd)
+        send_data(conn, cmd)
         # receive response from microservice
-        sleep(5)
-        response = recv_msg(conn)
+        sleep(10)
+        res = recv_data(conn)
         # print response
-        print(response)
+        print(res)
+        conn.close()
 
 
 # Run the `main()` function
