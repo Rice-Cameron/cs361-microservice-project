@@ -18,3 +18,5 @@ Data is received by the client.py file automatically due to how the sockets are 
 * recv_data(conn) for example
 
 All of this is possible through using python sockets as a communication medium.
+
+![alt text](./uml.png "UML Diagram")
