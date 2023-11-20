@@ -2,6 +2,7 @@
 
 import pickle
 import socket
+import errno
 from time import sleep
 
 IP, MPORT = 'localhost', 8000
@@ -19,16 +20,14 @@ def recv_data(conn):
     data_length = int(data_length_hex, 16)
     full_data = b""
     bytes_recv = 0
+
     while bytes_recv < data_length:
         data = conn.recv(min(data_length - bytes_recv, 4096))
         full_data += data
         bytes_recv += len(data)
-    if data_length == 1:
-        deserialized_data = pickle.loads(full_data)
-        return deserialized_data
-    else:
-        deserialized_data = pickle.loads(full_data)
-        return deserialized_data
+
+    deserialized_data = pickle.loads(full_data)
+    return deserialized_data
 
 
 def send_data(conn, command):
@@ -39,23 +38,37 @@ def send_data(conn, command):
 
 
 def main():
-    # Configure a socket object to use IPv4 and TCP
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as conn:
-        # Connect to the server
-        conn.connect((IP, int(MPORT)))
-        print(f"== Connected to microservice on port {MPORT}")
+    while True:
+        # Configure a socket object to use IPv4 and TCP
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as conn:
+            try:
+                # Connect to the server
+                conn.connect((IP, int(MPORT)))
+                print(f"== Connected to microservice on port {MPORT}")
 
-        # get command from user
-        cmd = input("Enter command: ")
-        # send command to microservice
-        sleep(3)
-        send_data(conn, cmd)
-        # receive response from microservice
-        sleep(10)
-        res = recv_data(conn)
-        # print response
-        print(res)
-        conn.close()
+                # get command from user
+                cmd = input("Enter command: ")
+                # send command to microservice
+                sleep(3)
+                send_data(conn, cmd)
+                # receive response from microservice
+                sleep(5)
+                res = recv_data(conn)
+                # print response
+                print("== Result:", res)
+                sleep(5)
+            except ConnectionRefusedError:
+                print("== Connection refused, retrying in 5 seconds")
+                sleep(5)
+            except OSError as e:
+                if e.errno == errno.EADDRINUSE:
+                    print("== Address already in use, retrying in 5 seconds")
+                    sleep(5)
+                elif e.errno == errno.EISCONN:
+                    print("== Already connected, retrying in 5 seconds")
+                    sleep(5)
+                else:
+                    raise
 
 
 # Run the `main()` function

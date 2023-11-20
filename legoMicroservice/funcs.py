@@ -2,6 +2,7 @@
 
 import pickle
 import socket
+import errno
 from time import sleep
 
 IP, FPORT = 'localhost', 8123
@@ -9,8 +10,9 @@ IP, FPORT = 'localhost', 8123
 
 # test function in placement of search, random, explore
 def command():
-    print("Command function called")
-    return 0
+    success = "Command function called"
+    print(success)
+    return success
 
 
 routes = {
@@ -58,20 +60,13 @@ def test_ms_call(conn):
     # Wait for the microservice to send a message
     cmd = recv_data(conn)
     print("Received:", cmd)
-    # call the function with the name 'intro'
-    # if the function exists, it will be called
-    # if the function does not exist, the program will crash
     if cmd in routes:
         # call the function
         res = routes[cmd]()
         print(f"== Result: {res}")
-        if res == 0:
-            # send the result back to the microservice
-            sleep(5)
-            send_data(conn, res)
-        if res != 0:
-            sleep(5)
-            send_data(conn, "Error in function")
+        # send the result back to the microservice
+        sleep(5)
+        send_data(conn, res)
     else:
         # send a message back to the microservice
         sleep(5)
@@ -85,16 +80,28 @@ def main():
         conn.listen()
         print(f"== Funcs listening on port {FPORT}")
         while True:
-            client_conn, addr = conn.accept()
-            with client_conn:
-                client_conn.settimeout(10.0)
-                print(f"== Received connection from {addr}")
-                try:
+            try:
+                client_conn, addr = conn.accept()
+                with client_conn:
+                    print(f"== Received connection from {addr}")
+                    client_conn.settimeout(10.0)
                     test_ms_call(client_conn)
-                    conn.close()
-                    return None
-                except socket.timeout:
-                    print("== Connection timed out")
+                print("== Connection closed, sleeping for 5 seconds")
+                sleep(5)
+            except socket.timeout:
+                print("== Connection timed out")
+            except ConnectionRefusedError:
+                print("== Connection refused, retrying in 5 seconds")
+                sleep(5)
+            except OSError as e:
+                if e.errno == errno.EADDRINUSE:
+                    print("== Address already in use, retrying in 5 seconds")
+                    sleep(5)
+                elif e.errno == errno.EISCONN:
+                    print("== Already connected, retrying in 5 seconds")
+                    sleep(5)
+                else:
+                    raise
 
 
 # Run the `main()` function

@@ -29,7 +29,7 @@ def send_data(command, conn):
     print(f"== Sending {command}")
     serialized_command = pickle.dumps(command)
     conn.sendall(to_hex(len(serialized_command)).encode())
-    conn.sendall(serialized_command)
+    result = conn.sendall(serialized_command)
 
 
 def recv_data(conn):
@@ -51,9 +51,7 @@ def main():
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as microservice_sock:
         microservice_sock.bind((IP, int(MPORT)))
         microservice_sock.listen()
-
         print(f"== Microservice listening on port {MPORT}")
-
         while True:
             conn, addr = microservice_sock.accept()
             with conn:
@@ -61,36 +59,22 @@ def main():
                 sleep(5)
                 command = recv_data(conn)
                 print(f"== Received command: {command}")
-                # check which command was sent against routes dict
                 if command in commands:
                     print(f"== In if statement")
                     function_to_call = commands[commands.index(command)]
-                    # close connection, open new one on FPORT
-                    conn.close()
                     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as newsocket:
                         newsocket.connect((IP, int(FPORT)))
-                        # Error: address already in use for the line above
                         print("== In new conn")
-                        # send command to function port
-                        send_data(function_to_call, newsocket) # FIXME. Maybe make string?
-                        # receive data from function port
+                        send_data(function_to_call, newsocket)
                         sleep(8)
                         res = recv_data(newsocket)
-                        newsocket.close()
-                        print(f"== Sent results to client")
-                        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as endsocket:
-                            endsocket.connect((IP, int(MPORT)))
-                            sleep(5)
-                            send_data(res, endsocket)
-                            endsocket.close()
+                        print("== Res:", res)
+                        send_data(res, conn)
                 else:
-                    # Send error to client that command was not found
-                    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as errsocket:
-                        errsocket.connect((IP, int(MPORT)))
-                        send_data("Command not found", errsocket)
-                        sleep(5)
-                        errsocket.close()
-                conn.close()
+                    send_data("Command not found", conn)
+            conn.close()
+            print("== Connection closed, sleeping for 5 seconds")
+            sleep(5)
 
 
 if __name__ == "__main__":
