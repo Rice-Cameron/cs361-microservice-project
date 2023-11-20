@@ -1,3 +1,3 @@
 # Microservice for Brandon Healey
 
-This folder contains the microservices created by Brandon Healey for my (Cameron Rice) individual project
+This folder contains the microservice written by Cameron Rice for Brandon Healey's individual project.
