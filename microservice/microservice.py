@@ -9,12 +9,12 @@
 # Receive message from LegoProjectUI.py
 
 
-import socket, subprocess
+import socket
 from time import sleep
 
 # import importlib
 
-# FPORT = Function Port; MPORT = Main port
+# FPORT = Function Port; MPORT = Main port (your UI or driver file will use MPORT)
 IP, FPORT, MPORT = 'localhost', 8123, 8000
 CHUNK = 100
 
