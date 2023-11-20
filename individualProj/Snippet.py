@@ -1,6 +1,6 @@
 # Cameron Rice
 # ricecam@oregonstate.edu
-from individualProj.Database import Database
+import Database
 
 
 class CodeSnippet(Database):

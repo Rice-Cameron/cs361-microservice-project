@@ -7,13 +7,8 @@
 
 from send_recv import send_data, recv_data, to_hex
 
-import socket
-import Snippet
-import Database
-import sys
-import os
-import io
-import json
+import socket, Database, sys, os, io, json
+from Snippet import CodeSnippet as Snippet
 
 
 IP, DPORT = 'localhost', 8080
@@ -76,7 +71,7 @@ def exit_program():
 
 def display_main_menu():
     print("-----------------------------------------------")
-    print("Welcome to Code Snippet Manager CLI")
+    print("Welcome to Code Saver CLI: A Minimal Code Snippet Manager")
     print("-----------------------------------------------")
     print("\nAvailable Commands:")
     print("- add          Add a new code snippet")
@@ -125,7 +120,7 @@ def main():
         if user_input in command_functions:
             command_functions[user_input]()
             # Sleep here?
-            recv_data()
+            # recv_data()
         else:
             print("Invalid command. Please try again.")
 
