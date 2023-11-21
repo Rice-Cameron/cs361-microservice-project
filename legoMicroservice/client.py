@@ -57,9 +57,9 @@ def main():
                 # print response
                 print("== Result:", res)
                 # print the key titled success in res
-                print("== Success:", res["success"])
+                # print("== Success:", res["success"])
                 # print the key titled message in res
-                print("== Message:", res["message"])
+                # print("== Message:", res["message"])
 
                 sleep(5)
             except ConnectionRefusedError:

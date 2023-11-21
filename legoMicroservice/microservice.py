@@ -26,14 +26,14 @@ def to_hex(number):
 
 
 def send_data(command, conn):
-    print(f"== Sending {command}")
+    # print(f"== Sending {command}")
     serialized_command = pickle.dumps(command)
     conn.sendall(to_hex(len(serialized_command)).encode())
     result = conn.sendall(serialized_command)
 
 
 def recv_data(conn):
-    print("== Receiving command")
+    # print("== Receiving command")
     data_length_hex = conn.recv(8, socket.MSG_WAITALL)
     data_length = int(data_length_hex, 16)
     full_data = b""
@@ -58,17 +58,15 @@ def main():
                 print(f"== Received connection from {addr}")
                 sleep(5)
                 command = recv_data(conn)
-                print(f"== Received command: {command}")
+                # print(f"== Received command: {command}")
                 if command in commands:
-                    print(f"== In if statement")
                     function_to_call = commands[commands.index(command)]
                     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as newsocket:
                         newsocket.connect((IP, int(FPORT)))
-                        print("== In new conn")
                         send_data(function_to_call, newsocket)
                         sleep(8)
                         res = recv_data(newsocket)
-                        print("== Res:", res)
+                        # print("== Res:", res)
                         send_data(res, conn)
                 else:
                     send_data("Command not found", conn)

@@ -17,6 +17,8 @@ def command():
     }
     print(success)
     return success
+
+
 routes = {
     "command": lambda: command(),
     # "search": search(),
