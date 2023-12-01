@@ -39,27 +39,17 @@ def send_data(conn, command):
 
 def main():
     while True:
-        # Configure a socket object to use IPv4 and TCP
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as conn:
             try:
-                # Connect to the server
                 conn.connect((IP, int(MPORT)))
                 print(f"== Connected to microservice on port {MPORT}")
 
-                # get command from user
                 cmd = input("Enter command: ")
-                # send command to microservice
                 sleep(3)
                 send_data(conn, cmd)
-                # receive response from microservice
                 sleep(5)
                 res = recv_data(conn)
-                # print response
                 print("== Result:", res)
-                # print the key titled success in res
-                # print("== Success:", res["success"])
-                # print the key titled message in res
-                # print("== Message:", res["message"])
 
                 sleep(5)
             except ConnectionRefusedError:

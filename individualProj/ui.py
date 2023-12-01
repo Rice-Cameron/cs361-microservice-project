@@ -5,13 +5,17 @@
 #        "Called" by microservice after user auth is verified
 #        sockets will be used to communicate with microservice
 
-from send_recv import send_data, recv_data, to_hex
+from send_recv import send_data, recv_data
 
-import socket, Database, sys, os, io, json
-from Snippet import CodeSnippet as Snippet
+import socket
+import Database
+import sys
+import os
+import json
+from time import sleep
+import errno
 
-
-IP, DPORT = 'localhost', 8080
+IP, MPORT = 'localhost', 8080
 
 
 def show_help_menu():
@@ -24,13 +28,16 @@ def show_help_menu():
                "This command allows you to add a new code snippet. You will be prompted to enter the title, language, "
                "and content of the snippet.",
 
-        "view": "View List of Code Snippets\n"
-                "This command displays a list of all existing code snippets. You can select a snippet to view its "
-                "details.",
+        "view all": "View List of all Code Snippets\n"
+                    "This command displays a list of all existing code snippets",
+
+        "view <id>": "View Details of a Code Snippet\n"
+                     "This command allows you to view the details of a specific code snippet by entering its ID.",
 
         "edit": "Edit an Existing Code Snippet\n"
-                "This command lets you edit an existing code snippet. You can select a snippet to modify its title, "
-                "language, and content.",
+                "This command lets you edit an existing code snippet by giving it the id of the snippet to edit. You "
+                "can select a snippet to modify its title,"
+                "language, content, or tags.",
 
         "delete": "Delete a Code Snippet\n"
                   "This command allows you to permanently delete a code snippet from the list.",
@@ -74,33 +81,52 @@ def display_main_menu():
     print("Welcome to Code Saver CLI: A Minimal Code Snippet Manager")
     print("-----------------------------------------------")
     print("\nAvailable Commands:")
-    print("- add          Add a new code snippet")
-    print("- view         View list of code snippets")
-    print("- edit         Edit an existing code snippet")
-    print("- delete       Delete a code snippet")
-    print("- search       Search for a code snippet")
-    print("- tag          Add tags to a code snippet")
-    print("- export       Export code snippets to a file")
-    print("- import       Import code snippets from a file")
-    print("- help         Show help menu")
-    print("- exit         Exit the program")
+    print("- add                                         Add a new code snippet")
+    print("- view all                                    View list of all code snippets")
+    print("- view <id>                                   View details of a code snippet")
+    print("- edit <id> <title, lang, content, tags>      Edit an existing code snippet")
+    print("- delete <all, id>                            Delete all code snippets or just one")
+    print("- search <title, lang, content, tag> <value>  Search for a code snippet by passing the option and its value")
+    print("- tag <id> <tag>                              Add tags to a code snippet")
+    print("- export <all, id> <filename>                 Export code snippets to a file")
+    print("- import <filename>                           Import code snippets from a file")
+    print("- help                                        Show help menu")
+    print("- exit                                        Exit the program")
+
 
 
 # Define a dictionary mapping commands to their respective functions
 
-command_functions = {
-    "add": lambda: send_data("add"),
-    "view": lambda: send_data("view"),
-    "edit": lambda: send_data("edit"),
-    "delete": lambda: send_data("delete"),
-    "search": lambda: send_data("search"),
-    "tag": lambda: send_data("tag"),
-    "export": lambda: send_data("export"),
-    "import": lambda: send_data("import"),
-    "help": show_help_menu,
-    "exit": exit_program
-}
+# command_functions = {
+#     "add": lambda: send_data("add"),
+#     "view": lambda: send_data("view"),
+#     "edit": lambda: send_data("edit"),
+#     "delete": lambda: send_data("delete"),
+#     "search": lambda: send_data("search"),
+#     "tag": lambda: send_data("tag"),
+#     "export": lambda: send_data("export"),
+#     "import": lambda: send_data("import"),
+#     "help": show_help_menu,
+#     "exit": exit_program
+# }
 
+
+def get_add_args():
+    print("-----------------------------------------------")
+    print("Add a New Code Snippet")
+    print("-----------------------------------------------")
+
+    title = input("Enter the title of the snippet: ")
+    lang = input("Enter the language of the snippet: ")
+    content = input("Enter the content of the snippet: ")
+
+    payload = {
+        "title": title,
+        "lang": lang,
+        "content": content
+    }
+
+    return payload
 
 def main():
     db = Database
@@ -115,14 +141,46 @@ def main():
 
     display_main_menu()
     while True:
-        user_input = input("\nEnter a command: ")
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as conn:
+            try:
+                conn.connect((IP, int(MPORT)))
+                # print(f"== Connected to microservice on port {MPORT}")
 
-        if user_input in command_functions:
-            command_functions[user_input]()
-            # Sleep here?
-            # recv_data()
-        else:
-            print("Invalid command. Please try again.")
+                cmd = input("Enter command: ")
+                sleep(3)
+                if cmd == "add":
+                    payload = get_add_args()
+                    cmd = {"cmd": "add", "payload": payload}
+                elif cmd == "delete all":
+                    # Ask user if they're sure they want to delete all snippets
+                    ans = input("Are you sure you want to delete all snippets? (y/n): ")
+                    if ans == "n":
+                        # break from loop and return to main menu
+                        display_main_menu()
+                        continue
+                elif cmd == "help":
+                    show_help_menu()
+                    continue
+                elif cmd == "exit":
+                    exit_program()
+                send_data(conn, cmd)
+                sleep(5)
+                res = recv_data(conn)
+                print("== Result:", res)
+
+                sleep(5)
+            except ConnectionRefusedError:
+                print("== Connection refused, retrying in 5 seconds")
+                sleep(5)
+            except OSError as e:
+                if e.errno == errno.EADDRINUSE:
+                    print("== Address already in use, retrying in 5 seconds")
+                    sleep(5)
+                elif e.errno == errno.EISCONN:
+                    print("== Already connected, retrying in 5 seconds")
+                    sleep(5)
+                else:
+                    raise
 
 
 if __name__ == "__main__":
