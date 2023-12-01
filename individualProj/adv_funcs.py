@@ -5,209 +5,116 @@
 #        Defs used when "called' upon via microservice
 
 
-from send_recv import send_data, recv_data, to_hex
+from send_recv import send_data, recv_data
 from Database import Database
-from Snippet import CodeSnippet as Snippet
 
 import socket
-import Snippet
 import Database
-import io
+import errno
+from time import sleep
+
+IP, APORT = 'localhost', 8123
 
 
-def search_code_snippet():
-    print("-----------------------------------------------")
-    print("Search for Code Snippet")
-    print("-----------------------------------------------")
-    # Ask user what they would like to search by: title, lang, content, tag
-    print("Search by:")
-    print("1. Title")
-    print("2. Language")
-    print("3. Content")
-    print("4. Tag")
-    print("5. Return to Main Menu")
-    print("-----------------------------------------------")
-    search_choice = int(input("== Select an option: "))
-    if search_choice == 1:
-        print("-----------------------------------------------")
-        search_title = input("== Enter a title to search for: ")
-        # send title to microservice
-        # send_data(to_hex(search_title))
-        # receive snippet from microservice
-        #snippet = recv_data()
-        snippet = Snippet()
-        print("-----------------------------------------------")
-        print(f"== {snippet.title} [{snippet.language}]")
-        print("-----------------------------------------------")
-        print(snippet.content)
-        print("-----------------------------------------------")
-        print(f"Tags: {snippet.tags}")
-        print("-----------------------------------------------")
-    elif search_choice == 2:
-        print("-----------------------------------------------")
-        search_lang = input("== Enter a language to search for: ")
-        # send lang to microservice
-        # send_data(to_hex(search_lang))
-        # receive snippet from microservice
-        #snippet = recv_data()
-        snippet = Snippet()
-        print("-----------------------------------------------")
-        print(f"== {snippet.title} [{snippet.language}]")
-        print("-----------------------------------------------")
-        print(snippet.content)
-        print("-----------------------------------------------")
-        print(f"Tags: {snippet.tags}")
-        print("-----------------------------------------------")
-    elif search_choice == 3:
-        print("-----------------------------------------------")
-        search_content = input("== Enter content to search for: ")
-        # send content to microservice
-        # send_data(to_hex(search_content))
-        # receive snippet from microservice
-        #snippet = recv_data()
-        snippet = Snippet()
-        print("-----------------------------------------------")
-        print(f"== {snippet.title} [{snippet.language}]")
-        print("-----------------------------------------------")
-        print(snippet.content)
-        print("-----------------------------------------------")
-        print(f"Tags: {snippet.tags}")
-        print("-----------------------------------------------")
-    elif search_choice == 4:
-        print("-----------------------------------------------")
-        search_tag = input("== Enter a tag to search for: ")
-        # send tag to microservice
-        # send_data(to_hex(search_tag))
-        # receive snippet from microservice
-        #snippet = recv_data()
-        snippet = Snippet()
-        print("-----------------------------------------------")
-        print(f"== {snippet.title} [{snippet.language}]")
-        print("-----------------------------------------------")
-        print(snippet.content)
-        print("-----------------------------------------------")
-        print(f"Tags: {snippet.tags}")
-        print("-----------------------------------------------")
-    elif search_choice == 5:
-        print("-----------------------------------------------")
-        print("Returning to Main Menu")
-        print("-----------------------------------------------")
-        # send main menu request to microservice
-        # send_data(to_hex("Returning to Main Menu"))
-    else:
-        print("-----------------------------------------------")
-        print("Invalid input, please try again")
-        print("-----------------------------------------------")
-        # send invalid input to microservice
-        # send_data(to_hex("Invalid input, please try again"))
+def process(conn):
+    # Wait for the microservice to send a message
+    data = recv_data(conn)
+    print("Received:", data)
+    cmd = data["cmd"]
 
-
-def tag_code_snippet():
-    print("-----------------------------------------------")
-    print("Tag Code Snippet")
-    print("-----------------------------------------------")
-    # Ask user what keyword they would like to tag the snippet with, only accept one word tags
-    # What snippet would you like to add a tag to?
-    # Please enter the id of the snippet you would like to add a tag to:
-    id = input("== Enter the id of the snippet you would like to add a tag to: ")
-    # What tag would you like to add to the snippet?
-    tag = input("== Enter the tag you would like to add to the snippet: ")
-    # send id and tag to microservice
-    # send_data(to_hex(id))
-    # send_data(to_hex(tag))
-    # receive confirmation from microservice
-    #confirmation = recv_data()
-    print("-----------------------------------------------")
-    #print(confirmation)
-    print("test confirmation")
-    print("-----------------------------------------------")
-
-
-def export_code_snippets():
-    print("-----------------------------------------------")
-    print("Export Code Snippets")
-    print("-----------------------------------------------")
-    print("Would you like to export all snippets or a specific snippet?")
-    print("1. All snippets")
-    print("2. Specific snippet")
-    print("3. Return to Main Menu")
-    print("-----------------------------------------------")
-    export_choice = int(input("== Select an option: "))
-    if export_choice == 1:
-        # Ask if the user is sure they want to export all snippets
-        print("-----------------------------------------------")
-        print("Are you sure you want to export all snippets?")
-        print("1. Yes")
-        print("2. No")
-        print("-----------------------------------------------")
-        export_all_choice = int(input("== Select an option: "))
-        if export_all_choice == 1:
-            # send export all request to microservice
-            # send_data(to_hex("Export all"))
-            # receive confirmation from microservice
-            #confirmation = recv_data()
-            print("-----------------------------------------------")
-            # print(confirmation)
-            print("test confirmation")
-            print("-----------------------------------------------")
-        elif export_all_choice == 2:
-            print("-----------------------------------------------")
-            print("Returning to Export Code Snippets Menu")
-            print("-----------------------------------------------")
-            # send return to export menu request to microservice
-            # send_data(to_hex("Returning to Export Code Snippets Menu"))
+    if cmd in routes:
+        # call the function
+        cmd_parts = cmd.split()
+        if len(cmd_parts) > 2:
+            res = routes[cmd_parts[0]](cmd_parts[1], cmd_parts[2])
+        elif len(cmd_parts) > 1:
+            res = routes[cmd_parts[0]](cmd_parts[1])
         else:
-            print("-----------------------------------------------")
-            print("Invalid input, please try again")
-            print("-----------------------------------------------")
-            # send invalid input to microservice
-            # send_data(to_hex("Invalid input, please try again"))
-    elif export_choice == 2:
-        # Ask user what snippet they would like to export
-        print("-----------------------------------------------")
-        export_id = input("== Enter the id of the snippet you would like to export: ")
-        # send export id to microservice
-        # send_data(to_hex(export_id))
-        # receive confirmation from microservice
-        # confirmation = recv_data()
-        print("-----------------------------------------------")
-        # print(confirmation)
-        print("test confirmation")
-        print("-----------------------------------------------")
-    elif export_choice == 3:
-        print("-----------------------------------------------")
-        print("Returning to Main Menu")
-        print("-----------------------------------------------")
-        # send main menu request to microservice
-        # send_data(to_hex("Returning to Main Menu"))
+            res = routes[cmd_parts[0]]()
+        print(f"== Result: {res}")
+        # send the result back to the microservice
+        sleep(5)
+        send_data(conn, res)
     else:
-        print("-----------------------------------------------")
-        print("Invalid input, please try again")
-        print("-----------------------------------------------")
-        # send invalid input to microservice
-        # send_data(to_hex("Invalid input, please try again"))
+        # send a message back to the microservice
+        sleep(5)
+        send_data(conn, "Command not found")
 
 
-def import_code_snippets():
-    print("-----------------------------------------------")
-    print("Import Code Snippets")
-    print("-----------------------------------------------")
-    print("Before you proceed, make sure the file you are attempting to import follows the following requirements: ")
-    print("1. The file must be in your current working directory")
-    print("2. The file must be in JSON format as such: {'snippet_id': {'title': title, 'language': language, "
-          "'content': content, 'tags': tags}}")
-    print("-----------------------------------------------")
-    print("Please enter the file name of the file you would like to import:")
-    file_name = input("== Enter the file name: ")
-    # open file and read info
-    with open(file_name, "r") as file:
-        data = file.read()
-        # file formatted as id, title, language, content, tags, delimited with ;
-        # Package all of the snippets in a dictionary and send to microservice
-        # send_data(to_hex(data))
-        # receive confirmation from microservice
-        #confirmation = recv_data()
-        print("-----------------------------------------------")
-        # print(confirmation)
-        print("test confirmation")
-        print("-----------------------------------------------")
+def search_code_snippet(search_option, search_value):
+    if search_option in ['title', 'lang', 'content', 'tag']:
+        # Search the database for the snippet
+        snippets = Database.search_snippets(search_option, search_value)
+        return snippets
+    else:
+        return "Invalid search option"
+
+
+def tag_code_snippet(snippet_id, tag):
+    # Add the tag to the snippet in the database
+    Database.add_tag(snippet_id, tag)
+    return f"Tag {tag} added to snippet {snippet_id}"
+
+
+def export_code_snippets(export_choice, filename):
+    if export_choice == 'all':
+        # Export all snippets from the database to a file
+        Database.export_all(filename)
+        return "All code snippets exported successfully"
+    elif export_choice.isdigit():
+        # Export the specified snippet from the database to a file
+        snippet_id = int(export_choice)
+        Database.export_snippet(snippet_id, filename)
+        return f"Code snippet {snippet_id} exported successfully"
+    else:
+        return "Invalid export choice"
+
+
+def import_code_snippets(filename):
+    # Import snippets from the file to the database
+    Database.import_snippet(filename)
+    return f"Code snippets imported from {filename} successfully"
+
+
+routes = {
+    "search": search_code_snippet,
+    "tag": tag_code_snippet,
+    "export": export_code_snippets,
+    "import": import_code_snippets
+}
+
+
+def main():
+    # Configure a socket object to use IPv4 and TCP
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as conn:
+        conn.bind((IP, int(APORT)))
+        conn.listen()
+        print(f"== Funcs listening on port {APORT}")
+        while True:
+            try:
+                client_conn, addr = conn.accept()
+                with client_conn:
+                    print(f"== Received connection from {addr}")
+                    client_conn.settimeout(10.0)
+                    process(client_conn)
+                print("== Connection closed, sleeping for 5 seconds")
+                sleep(5)
+            except socket.timeout:
+                print("== Connection timed out")
+            except ConnectionRefusedError:
+                print("== Connection refused, retrying in 5 seconds")
+                sleep(5)
+            except OSError as e:
+                if e.errno == errno.EADDRINUSE:
+                    print("== Address already in use, retrying in 5 seconds")
+                    sleep(5)
+                elif e.errno == errno.EISCONN:
+                    print("== Already connected, retrying in 5 seconds")
+                    sleep(5)
+                else:
+                    raise
+
+
+# Run the `main()` function
+if __name__ == "__main__":
+    main()

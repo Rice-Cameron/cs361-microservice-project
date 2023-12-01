@@ -1,23 +1,22 @@
-# This microservice is for Brandon Healey's Lego Set Database program in which the user searches for a set and the
-# program returns it.
+# Cameron Rice
+# ricecam@oregonstate.edu
 
-# This program will act as a route manager to direct the request to the correct files to access
-# their functions, rather than direct calls
-
-# The user can search for a set, get a random set, or explore Lego Starwars.
-
-# Receive message from LegoProjectUI.py
-
+"""
+This is the microservice that will be listening on MPORT (8000) for connections from the UI file.
+It will then connect to either CPORT (8123) or APORT (8124) depending on the command received from the UI file.
+"""
 
 import pickle
 import socket
 from time import sleep
 
 # FPORT = Function Port (funcs.py listens on this); MPORT = Main port (your UI or driver file will connect using MPORT)
-IP, FPORT, MPORT = 'localhost', 8123, 8000
+IP, CPORT, MPORT, APORT = 'localhost', 8123, 8000, 8124
 CHUNK = 100
 
 commands = ["add", "view", "edit", "delete", "search", "tag", "export", "import", "help", "exit"]
+crud_cmds = ["add", "view", "edit", "delete"]
+adv_cmds = ["search", "tag", "export", "import"]
 
 
 def to_hex(number):
@@ -59,7 +58,11 @@ def main():
                 if command in commands:
                     function_to_call = commands[commands.index(command)]
                     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as newsocket:
-                        newsocket.connect((IP, int(FPORT)))
+                        # If in crud_cmds, connect to CPORT, if in adv_cmds, connect to APORT
+                        if function_to_call in crud_cmds:
+                            newsocket.connect((IP, int(CPORT)))
+                        elif function_to_call in adv_cmds:
+                            newsocket.connect((IP, int(APORT)))
                         send_data(function_to_call, newsocket)
                         sleep(8)
                         res = recv_data(newsocket)
