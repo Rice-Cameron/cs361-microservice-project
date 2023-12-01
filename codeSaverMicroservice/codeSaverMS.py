@@ -1,66 +1,75 @@
-import socket
+# This microservice is for Brandon Healey's Lego Set Database program in which the user searches for a set and the
+# program returns it.
+
+# This program will act as a route manager to direct the request to the correct files to access
+# their functions, rather than direct calls
+
+# The user can search for a set, get a random set, or explore Lego Starwars.
+
+# Receive message from LegoProjectUI.py
+
+
 import pickle
+import socket
+from time import sleep
 
-def process_data(data):
-    # Process the received data
-    if data == 1:
-        return {"result": "Option 1"}
-    elif data == 2:
-        return {"result": "Option 2"}
-    elif data == 3:
-        return {"result": "Option 3"}
-    elif data == 4:
-        return {"result": "Option 4"}
-    else:
-        return {"result": "Invalid Option"}
+# FPORT = Function Port (funcs.py listens on this); MPORT = Main port (your UI or driver file will connect using MPORT)
+IP, FPORT, MPORT = 'localhost', 8123, 8000
+CHUNK = 100
 
-def receive_data(client_socket):
-    received_data = b""
-    while True:
-        chunk = client_socket.recv(1024)
-        if not chunk:
-            break
-        received_data += chunk
-        if received_data.endswith(b"__END_OF_TRANSMISSION__"):
-            break
-    return pickle.loads(received_data[:-len(b"__END_OF_TRANSMISSION__")])
+commands = ["add", "view", "edit", "delete", "search", "tag", "export", "import", "help", "exit"]
 
-def start_server():
-    # Create a socket object
-    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-    # Bind the socket to a specific address and port
-    host = "127.0.0.1"  # localhost
-    port = 12345
-    server_socket.bind((host, port))
+def to_hex(number):
+    assert number <= 0xffffffff, "Number too large to convert to hex"
+    return "{:08x}".format(number)
 
-    # Listen for incoming connections
-    server_socket.listen(5)
 
-    print(f"Server listening on {host}:{port}")
+def send_data(command, conn):
+    serialized_command = pickle.dumps(command)
+    conn.sendall(to_hex(len(serialized_command)).encode())
+    result = conn.sendall(serialized_command)
 
-    while True:
-        # Wait for a connection from a client
-        client_socket, client_address = server_socket.accept()
-        print(f"Connection from {client_address}")
 
-        # Receive data from the client
-        data = receive_data(client_socket)
+def recv_data(conn):
+    data_length_hex = conn.recv(8, socket.MSG_WAITALL)
+    data_length = int(data_length_hex, 16)
+    full_data = b""
+    bytes_recv = 0
+    while bytes_recv < data_length:
+        data = conn.recv(min(data_length - bytes_recv, 4096))
+        full_data += data
+        bytes_recv += len(data)
 
-        if not data:
-            break
+    deserialized_data = pickle.loads(full_data)
+    return deserialized_data
 
-        # Process the received data
-        result = process_data(data)
 
-        # Send the result back to the client
-        client_socket.send(pickle.dumps(result))
+def main():
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as microservice_sock:
+        microservice_sock.bind((IP, int(MPORT)))
+        microservice_sock.listen()
+        print(f"== Microservice listening on port {MPORT}")
+        while True:
+            conn, addr = microservice_sock.accept()
+            with conn:
+                print(f"== Received connection from {addr}")
+                sleep(5)
+                command = recv_data(conn)
+                if command in commands:
+                    function_to_call = commands[commands.index(command)]
+                    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as newsocket:
+                        newsocket.connect((IP, int(FPORT)))
+                        send_data(function_to_call, newsocket)
+                        sleep(8)
+                        res = recv_data(newsocket)
+                        send_data(res, conn)
+                else:
+                    send_data("Command not found", conn)
+            conn.close()
+            print("== Connection closed, sleeping for 5 seconds")
+            sleep(5)
 
-        # Close the connection
-        client_socket.close()
-
-    # Close the server socket when the loop is exited
-    server_socket.close()
 
 if __name__ == "__main__":
-    start_server()
+    main()
