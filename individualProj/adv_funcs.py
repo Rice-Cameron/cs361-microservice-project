@@ -89,7 +89,7 @@ def main():
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as conn:
         conn.bind((IP, int(APORT)))
         conn.listen()
-        print(f"== Funcs listening on port {APORT}")
+        print(f"== Adv Funcs listening on port {APORT}")
         while True:
             try:
                 client_conn, addr = conn.accept()

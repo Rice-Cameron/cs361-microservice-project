@@ -94,28 +94,7 @@ def display_main_menu():
     print("- exit                                        Exit the program")
 
 
-
-# Define a dictionary mapping commands to their respective functions
-
-# command_functions = {
-#     "add": lambda: send_data("add"),
-#     "view": lambda: send_data("view"),
-#     "edit": lambda: send_data("edit"),
-#     "delete": lambda: send_data("delete"),
-#     "search": lambda: send_data("search"),
-#     "tag": lambda: send_data("tag"),
-#     "export": lambda: send_data("export"),
-#     "import": lambda: send_data("import"),
-#     "help": show_help_menu,
-#     "exit": exit_program
-# }
-
-
 def get_add_args():
-    print("-----------------------------------------------")
-    print("Add a New Code Snippet")
-    print("-----------------------------------------------")
-
     title = input("Enter the title of the snippet: ")
     lang = input("Enter the language of the snippet: ")
     content = input("Enter the content of the snippet: ")
@@ -127,6 +106,7 @@ def get_add_args():
     }
 
     return payload
+
 
 def main():
     db = Database
@@ -141,33 +121,28 @@ def main():
 
     display_main_menu()
     while True:
+        cmd = input("Enter command: ")
+        sleep(3)
+        if cmd == "add":
+            payload = get_add_args()
+            cmd = {"cmd": "add", "payload": payload}
+        elif cmd == "delete all":
+            ans = input("Are you sure you want to delete all snippets? (y/n): ")
+            if ans == "n":
+                continue
+        elif cmd == "help":
+            show_help_menu()
+            continue
+        elif cmd == "exit":
+            exit_program()
+
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as conn:
             try:
                 conn.connect((IP, int(MPORT)))
-                # print(f"== Connected to microservice on port {MPORT}")
-
-                cmd = input("Enter command: ")
-                sleep(3)
-                if cmd == "add":
-                    payload = get_add_args()
-                    cmd = {"cmd": "add", "payload": payload}
-                elif cmd == "delete all":
-                    # Ask user if they're sure they want to delete all snippets
-                    ans = input("Are you sure you want to delete all snippets? (y/n): ")
-                    if ans == "n":
-                        # break from loop and return to main menu
-                        display_main_menu()
-                        continue
-                elif cmd == "help":
-                    show_help_menu()
-                    continue
-                elif cmd == "exit":
-                    exit_program()
                 send_data(conn, cmd)
                 sleep(5)
                 res = recv_data(conn)
-                print("== Result:", res)
-
+                print("== Result: \n", res)
                 sleep(5)
             except ConnectionRefusedError:
                 print("== Connection refused, retrying in 5 seconds")

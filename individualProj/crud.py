@@ -55,15 +55,18 @@ def process(conn):
 
 
 def add_code_snippet(payload):
-    snippet_id = len(Database.get_length(db)) + 1
     title = payload["title"]
     language = payload["lang"]
     content = payload["content"]
     tags = payload.get("tags", "")  # Optional, will be an empty string if not provided
-    snippet_string = ('{"snippet_id": ' + str(snippet_id) + ', "title": "' + title + '", "language": "' + language +
-                      '", "content": "' + content + '", "tags": "' + tags + '"}')
-    snippet = json.loads(snippet_string)
-    Database.add_snippet(snippet)
+    snippet = {
+        "title": title,
+        "language": language,
+        "content": content,
+        "tags": tags
+    }
+    Database.add_snippet(db, snippet)
+    snippet_id = Database.get_length(db)
     return f"Code snippet {snippet_id} added successfully!"
 
 
@@ -76,27 +79,32 @@ def view_code_snippets(arg=None):
 
     if arg == "all":
         snippets = Database.get_all(db)
-        db.code_snippets = snippets
-        for snippet in db.code_snippets:
+        db.code_snippets = json.loads(snippets)
+        for snippet_id, snippet in db.code_snippets.items():
             response["snippets"].append({
-                "title": snippet.title,
-                "language": snippet.language,
-                "content": snippet.content,
-                "tags": snippet.tags
+                "title": snippet["title"],
+                "language": snippet["language"],
+                "content": snippet["content"],
+                "tags": snippet["tags"]
             })
+        return f"{response['header']}\n" + "\n".join(
+            [f"{i + 1}. {snippet['title']} {snippet['language']} {snippet['content']}" for i, snippet in
+             enumerate(response["snippets"])])
     elif arg.isdigit():
         snippet_id = int(arg)
         snippet = Database.get_snippet(db, snippet_id)
         response["snippets"].append({
-            "title": snippet.title,
-            "language": snippet.language,
-            "content": snippet.content,
-            "tags": snippet.tags
+            "title": snippet["title"],
+            "language": snippet["language"],
+            "content": snippet["content"],
+            "tags": snippet["tags"]
         })
+        return f"{response['header']}\n" + "\n".join(
+            [f"{snippet_id}. {snippet['title']} {snippet['language']} {snippet['content']}" for i, snippet in
+             enumerate(response["snippets"])])
+
     else:
         response["message"] = "Invalid argument for view command"
-
-    return response
 
 
 def edit_code_snippet(snippet_id, edit_choice, new_value):
@@ -141,7 +149,7 @@ def main():
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as conn:
         conn.bind((IP, int(CPORT)))
         conn.listen()
-        print(f"== Funcs listening on port {CPORT}")
+        print(f"== CRUD listening on port {CPORT}")
         while True:
             try:
                 client_conn, addr = conn.accept()
