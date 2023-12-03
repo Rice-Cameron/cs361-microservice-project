@@ -100,7 +100,7 @@ def view_code_snippets(arg=None):
             "tags": snippet["tags"]
         })
         return f"{response['header']}\n" + "\n".join(
-            [f"{snippet_id}. {snippet['title']} {snippet['language']} {snippet['content']}" for i, snippet in
+            [f"{snippet_id}. Title: {snippet['title']}, Language: {snippet['language']}, Content:{snippet['content']}" for i, snippet in
              enumerate(response["snippets"])])
 
     else:
@@ -111,14 +111,14 @@ def edit_code_snippet(snippet_id, edit_choice, new_value):
     snippet_id = int(snippet_id)
     snippet = Database.get_snippet(db, snippet_id)
     if edit_choice == 'title':
-        snippet.title = new_value
+        snippet["title"] = new_value
     elif edit_choice == 'lang':
-        snippet.language = new_value
+        snippet["language"] = new_value
     elif edit_choice == 'content':
-        snippet.content = new_value
+        snippet["content"] = new_value
     elif edit_choice == 'tags':
-        snippet.tags = new_value
-    db.code_snippets[snippet_id] = snippet
+        snippet["tags"] = new_value
+    db.code_snippets[str(snippet_id)] = snippet
     with open("snippet.json", "w") as f:
         json.dump(db.code_snippets, f)
     return f"Code snippet {snippet_id} edited successfully!"
