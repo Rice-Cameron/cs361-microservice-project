@@ -55,15 +55,27 @@ def main():
                 print(f"== Received connection from {addr}")
                 sleep(5)
                 command = recv_data(conn)
-                if command in commands:
-                    function_to_call = commands[commands.index(command)]
+                # Tokenize and check first part of command
+                print(command)
+                if not isinstance(command, dict):
+                    command_token = command.split()[0]
+                    if command_token in commands:
+                        function_to_call = commands[commands.index(command_token)]
+                        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as newsocket:
+                            # If in crud_cmds, connect to CPORT, if in adv_cmds, connect to APORT
+                            if function_to_call in crud_cmds:
+                                newsocket.connect((IP, int(CPORT)))
+                            elif function_to_call in adv_cmds:
+                                newsocket.connect((IP, int(APORT)))
+                            send_data(command, newsocket)
+                            sleep(8)
+                            res = recv_data(newsocket)
+                            send_data(res, conn)
+                # Logic for add dict()
+                elif isinstance(command, dict):
                     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as newsocket:
-                        # If in crud_cmds, connect to CPORT, if in adv_cmds, connect to APORT
-                        if function_to_call in crud_cmds:
-                            newsocket.connect((IP, int(CPORT)))
-                        elif function_to_call in adv_cmds:
-                            newsocket.connect((IP, int(APORT)))
-                        send_data(function_to_call, newsocket)
+                        newsocket.connect((IP, int(CPORT)))
+                        send_data(command, newsocket)
                         sleep(8)
                         res = recv_data(newsocket)
                         send_data(res, conn)
