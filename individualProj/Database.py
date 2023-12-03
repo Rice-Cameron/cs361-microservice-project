@@ -69,9 +69,13 @@ class Database:
 
     def add_snippet(self, snippet):
         print("== Adding snippet to database")
-        with open("snippet.json", "r") as f:
-            code_dict = json.load(f)
-        code_dict[str(len(code_dict) + 1)] = snippet
+        try:
+            with open("snippet.json", "r") as f:
+                code_dict = json.load(f)
+        except (FileNotFoundError, json.JSONDecodeError):
+            code_dict = {}
+        snippet_id = str(len(code_dict) + 1)
+        code_dict[snippet_id] = snippet
         with open("snippet.json", "w") as f:
             json.dump(code_dict, f)
 
