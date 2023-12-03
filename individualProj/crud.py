@@ -19,15 +19,23 @@ def process(conn):
     # Wait for the microservice to send a message
     data = recv_data(conn)
     print("Received:", data)
-    cmd = data["cmd"]
-    payload = data.get("payload", None)  # Optional, will be None if not provided
 
-    if cmd in routes:
-        # call the function
+    if isinstance(data, dict) and "cmd" in data:
+        cmd = data["cmd"]
+        payload = data.get("payload", None)  # Optional, will be None if not provided
         if cmd == "add" and payload is not None:
             res = routes[cmd](payload)
+            print(f"== Result: {res}")
+            # send the result back to the microservice
+            sleep(5)
+            send_data(conn, res)
         else:
-            cmd_parts = cmd.split()
+            # send a message back to the microservice
+            sleep(5)
+            send_data(conn, "Command not found")
+    elif isinstance(data, str):
+        cmd_parts = data.split()
+        if cmd_parts[0] in routes:
             if len(cmd_parts) > 3:
                 res = routes[cmd_parts[0]](cmd_parts[1], cmd_parts[2], cmd_parts[3])
             elif len(cmd_parts) > 2:
@@ -36,14 +44,14 @@ def process(conn):
                 res = routes[cmd_parts[0]](cmd_parts[1])
             else:
                 res = routes[cmd_parts[0]]()
-        print(f"== Result: {res}")
-        # send the result back to the microservice
-        sleep(5)
-        send_data(conn, res)
-    else:
-        # send a message back to the microservice
-        sleep(5)
-        send_data(conn, "Command not found")
+            print(f"== Result: {res}")
+            # send the result back to the microservice
+            sleep(5)
+            send_data(conn, res)
+        else:
+            # send a message back to the microservice
+            sleep(5)
+            send_data(conn, "Command not found")
 
 
 def add_code_snippet(payload):
@@ -116,8 +124,8 @@ def delete_code_snippet(delete_choice):
         snippet_id = int(delete_choice)
         db.delete_snippet(snippet_id)
         return f"Code snippet {snippet_id} deleted successfully!"
-    else:
-        return "Invalid option selected, returning to main menu"
+
+    return "Invalid option selected, returning to main menu"
 
 
 routes = {

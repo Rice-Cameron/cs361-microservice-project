@@ -13,18 +13,18 @@ import Database
 import errno
 from time import sleep
 
-IP, APORT = 'localhost', 8123
+IP, APORT = 'localhost', 8124
 
 
 def process(conn):
     # Wait for the microservice to send a message
     data = recv_data(conn)
     print("Received:", data)
-    cmd = data["cmd"]
-
+    # Tokenize and check first word of command
+    cmd = data.split()[0]
     if cmd in routes:
         # call the function
-        cmd_parts = cmd.split()
+        cmd_parts = data.split()
         if len(cmd_parts) > 2:
             res = routes[cmd_parts[0]](cmd_parts[1], cmd_parts[2])
         elif len(cmd_parts) > 1:

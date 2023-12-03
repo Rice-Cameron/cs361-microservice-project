@@ -15,7 +15,7 @@ import json
 from time import sleep
 import errno
 
-IP, MPORT = 'localhost', 8080
+IP, MPORT = 'localhost', 8000
 
 
 def show_help_menu():
