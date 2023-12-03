@@ -15,11 +15,6 @@ IP, CPORT = 'localhost', 8123
 db = Database()
 
 
-# FIXME.
-# Current Bugs:
-#   Say you have two snippets, and you delete the first and then add one. That new one despite getting id one overwrites id 2 and the id stays at 2s
-
-
 def process(conn):
     # Wait for the microservice to send a message
     data = recv_data(conn)

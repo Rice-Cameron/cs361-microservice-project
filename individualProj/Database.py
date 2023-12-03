@@ -26,9 +26,18 @@ class Database:
         print("== Deleting snippet from database")
         with open("snippet.json", "r") as f:
             code_dict = json.load(f)
-            del code_dict[str(snippet_id)]
+        del code_dict[str(snippet_id)]
+        # Update the snippet_id of the remaining snippets
+        new_code_dict = {str(i + 1): snippet for i, snippet in enumerate(code_dict.values())}
         with open("snippet.json", "w") as f:
-            json.dump(code_dict, f)
+            json.dump(new_code_dict, f)
+    # def delete_snippet(self, snippet_id):
+    #     print("== Deleting snippet from database")
+    #     with open("snippet.json", "r") as f:
+    #         code_dict = json.load(f)
+    #         del code_dict[str(snippet_id)]
+    #     with open("snippet.json", "w") as f:
+    #         json.dump(code_dict, f)
 
     def search_snippets(self, search_option, search_value):
         matching_snippets = {}
