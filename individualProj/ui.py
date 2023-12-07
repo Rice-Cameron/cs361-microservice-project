@@ -86,7 +86,7 @@ Available Commands:
 - view <id>                                          View details of a code snippet
 - edit <id> <title, lang, content, tags> <value>     Edit an existing code snippet
 - delete <all, id>                                   Delete all code snippets or just one
-- search <title, lang, content, tag> <value>         Search for a code snippet by passing the option and its value
+- search <title, lang, content, tags> <value>         Search for a code snippet by passing the option and its value
 - tag <id> <tag>                                     Add tags to a code snippet
 - export <all, id> <filename>                        Export code snippets to a file
 - import <filename>                                  Import code snippets from a file

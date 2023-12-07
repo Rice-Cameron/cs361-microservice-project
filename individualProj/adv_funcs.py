@@ -43,7 +43,7 @@ def process(conn):
 
 
 def search_code_snippet(search_option, search_value):
-    if search_option in ['title', 'lang', 'content', 'tag']:
+    if search_option in ['title', 'lang', 'content', 'tags']:
         # Search the database for the snippet
         snippets = Database.search_snippets(db, search_option, search_value)
 
@@ -62,9 +62,8 @@ def search_code_snippet(search_option, search_value):
             })
 
         return f"{response['header']}\n" + "\n".join(
-            [f"{i + 1}. Title: {snippet['title']}, lang: {snippet['lang']}, Content:{snippet['content']}" for i, snippet
-             in
-             enumerate(response["snippets"])])
+            [f"{snippet_id}. Title: {snippet['title']}, lang: {snippet['lang']}, Content:{snippet['content']}" for snippet_id, snippet
+             in snippets.items()])
     else:
         return "Invalid search option"
 

@@ -38,8 +38,15 @@ class Database:
             code_dict = json.load(f)
             for snippet_id, snippet in code_dict.items():
                 # Check if search_option is a valid key in the snippet dictionary
-                if search_option in snippet and snippet[search_option].lower() == search_value.lower():
-                    matching_snippets[snippet_id] = snippet
+                if search_option in snippet:
+                    if search_option == 'tags':
+                        # If search_option is 'tags', iterate over each tag in the list
+                        for tag in snippet[search_option]:
+                            if tag.lower() == search_value.lower():
+                                matching_snippets[snippet_id] = snippet
+                                break
+                    elif snippet[search_option].lower() == search_value.lower():
+                        matching_snippets[snippet_id] = snippet
         return matching_snippets
 
     def add_tag(self, snippet_id, tag):
@@ -47,7 +54,11 @@ class Database:
             code_dict = json.load(f)
             snippet = code_dict[str(snippet_id)]
             if 'tags' in snippet:
-                snippet['tags'].append(tag)
+                # Ensure that tags is a list before appending
+                if isinstance(snippet['tags'], list):
+                    snippet['tags'].append(tag)
+                else:
+                    snippet['tags'] = [snippet['tags'], tag]
             else:
                 snippet['tags'] = [tag]
         with open("snippet.json", "w") as f:

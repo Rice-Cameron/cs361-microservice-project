@@ -1,1 +1,1 @@
-{"1": {"title": "Print", "lang": "python", "content": "print()", "tags": ""}, "2": {"title": "add", "lang": "python", "content": "add()", "tags": ""}}
+{"1": {"title": "Print", "lang": "python", "content": "print()", "tags": []}, "2": {"title": "add", "lang": "python", "content": "add()", "tags": ["testingList", "shouldHave2Tags"]}}
