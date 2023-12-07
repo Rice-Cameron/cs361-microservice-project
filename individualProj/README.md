@@ -2,7 +2,7 @@
 
 This repository folder contains the individual project of Cameron Rice named Code Saver. This is a code snippet manager in which the user can store their own code snippets that they may want to access frequently.
 
-This includes being able to view, edit, search, tag, import, and export code snippets through CLI commands.
+This includes being able to add, view, edit, delete, search, tag, import, and export code snippets through CLI commands.
 
 To run this program, run the following commands in the following order:
    
