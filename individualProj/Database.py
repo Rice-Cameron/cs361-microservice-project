@@ -73,13 +73,16 @@ class Database:
 
     def import_snippet(self, filename):
         with open(filename, "r") as f:
-            snippet = json.load(f)
-        snippet_id = str(self.get_length() + 1)
+            imported_snippets = json.load(f)
+
         with open("snippet.json", "r") as f:
-            code_dict = json.load(f)
-        code_dict[snippet_id] = snippet
+            current_snippets = json.load(f)
+
+        for snippet_id, snippet in imported_snippets.items():
+            current_snippets[str(len(current_snippets) + 1)] = snippet
+
         with open("snippet.json", "w") as f:
-            json.dump(code_dict, f)
+            json.dump(current_snippets, f)
 
     def add_snippet(self, snippet):
         print("== Adding snippet to database")

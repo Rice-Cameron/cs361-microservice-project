@@ -87,7 +87,6 @@ def export_code_snippets(export_choice, filename):
     else:
         return "Invalid export choice"
 
-
 def import_code_snippets(filename):
     # Import snippets from the file to the database
     Database.import_snippet(db, filename)
