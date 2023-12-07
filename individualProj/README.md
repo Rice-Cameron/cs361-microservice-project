@@ -5,7 +5,8 @@ This repository folder contains the individual project of Cameron Rice named Cod
 This includes being able to view, edit, search, tag, import, and export code snippets through CLI commands.
 
 To run this program, run the following commands in the following order:
-    - navigate to the directory of codeSaveMicroservice/
+   
+     - navigate to the directory of codeSaveMicroservice/
         - in one process, run "python3 codeSaverMS.py"
 
     - navigate to the ditrectory of individualProj/
