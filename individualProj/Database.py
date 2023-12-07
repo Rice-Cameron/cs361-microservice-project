@@ -31,20 +31,14 @@ class Database:
         new_code_dict = {str(i + 1): snippet for i, snippet in enumerate(code_dict.values())}
         with open("snippet.json", "w") as f:
             json.dump(new_code_dict, f)
-    # def delete_snippet(self, snippet_id):
-    #     print("== Deleting snippet from database")
-    #     with open("snippet.json", "r") as f:
-    #         code_dict = json.load(f)
-    #         del code_dict[str(snippet_id)]
-    #     with open("snippet.json", "w") as f:
-    #         json.dump(code_dict, f)
 
     def search_snippets(self, search_option, search_value):
         matching_snippets = {}
         with open("snippet.json", "r") as f:
             code_dict = json.load(f)
             for snippet_id, snippet in code_dict.items():
-                if snippet[search_option] == search_value:
+                # Check if search_option is a valid key in the snippet dictionary
+                if search_option in snippet and snippet[search_option].lower() == search_value.lower():
                     matching_snippets[snippet_id] = snippet
         return matching_snippets
 

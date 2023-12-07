@@ -2,11 +2,10 @@
 # ricecam@oregonstate.edu
 
 from send_recv import send_data, recv_data
-
-import socket
-import json
 from Database import Database
 from time import sleep
+import socket
+import json
 import errno
 
 IP, CPORT = 'localhost', 8123
@@ -56,12 +55,12 @@ def process(conn):
 
 def add_code_snippet(payload):
     title = payload["title"]
-    language = payload["lang"]
+    lang = payload["lang"]
     content = payload["content"]
     tags = payload.get("tags", "")  # Optional, will be an empty string if not provided
     snippet = {
         "title": title,
-        "language": language,
+        "lang": lang,
         "content": content,
         "tags": tags
     }
@@ -83,24 +82,24 @@ def view_code_snippets(arg=None):
         for snippet_id, snippet in db.code_snippets.items():
             response["snippets"].append({
                 "title": snippet["title"],
-                "language": snippet["language"],
+                "lang": snippet["lang"],
                 "content": snippet["content"],
                 "tags": snippet["tags"]
             })
         return f"{response['header']}\n" + "\n".join(
-            [f"{i + 1}. {snippet['title']} {snippet['language']} {snippet['content']}" for i, snippet in
+            [f"{i + 1}. {snippet['title']} {snippet['lang']} {snippet['content']}" for i, snippet in
              enumerate(response["snippets"])])
     elif arg.isdigit():
         snippet_id = int(arg)
         snippet = Database.get_snippet(db, snippet_id)
         response["snippets"].append({
             "title": snippet["title"],
-            "language": snippet["language"],
+            "lang": snippet["lang"],
             "content": snippet["content"],
             "tags": snippet["tags"]
         })
         return f"{response['header']}\n" + "\n".join(
-            [f"{snippet_id}. Title: {snippet['title']}, Language: {snippet['language']}, Content:{snippet['content']}" for i, snippet in
+            [f"{snippet_id}. Title: {snippet['title']}, lang: {snippet['lang']}, Content:{snippet['content']}" for i, snippet in
              enumerate(response["snippets"])])
 
     else:
@@ -113,7 +112,7 @@ def edit_code_snippet(snippet_id, edit_choice, new_value):
     if edit_choice == 'title':
         snippet["title"] = new_value
     elif edit_choice == 'lang':
-        snippet["language"] = new_value
+        snippet["lang"] = new_value
     elif edit_choice == 'content':
         snippet["content"] = new_value
     elif edit_choice == 'tags':

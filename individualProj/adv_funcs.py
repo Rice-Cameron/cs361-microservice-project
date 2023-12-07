@@ -7,13 +7,14 @@
 
 from send_recv import send_data, recv_data
 from Database import Database
-
-import socket
-import Database
-import errno
 from time import sleep
+import socket
+import json
+import errno
 
 IP, APORT = 'localhost', 8124
+
+db = Database()
 
 
 def process(conn):
@@ -44,27 +45,51 @@ def process(conn):
 def search_code_snippet(search_option, search_value):
     if search_option in ['title', 'lang', 'content', 'tag']:
         # Search the database for the snippet
-        snippets = Database.search_snippets(search_option, search_value)
-        return snippets
+        snippets = Database.search_snippets(db, search_option, search_value)
+
+        response = {
+            "header": "Search Results",
+            "snippets": [],
+            "message": ""
+        }
+
+        for snippet_id, snippet in snippets.items():
+            response["snippets"].append({
+                "title": snippet["title"],
+                "lang": snippet["lang"],
+                "content": snippet["content"],
+                "tags": snippet["tags"]
+            })
+
+        return f"{response['header']}\n" + "\n".join(
+            [f"{i + 1}. Title: {snippet['title']}, lang: {snippet['lang']}, Content:{snippet['content']}" for i, snippet
+             in
+             enumerate(response["snippets"])])
     else:
         return "Invalid search option"
-
+# def search_code_snippet(search_option, search_value):
+#     if search_option in ['title', 'lang', 'content', 'tag']:
+#         # Search the database for the snippet
+#         snippets = Database.search_snippets(db, search_option, search_value)
+#         return snippets
+#     else:
+#         return "Invalid search option"
 
 def tag_code_snippet(snippet_id, tag):
     # Add the tag to the snippet in the database
-    Database.add_tag(snippet_id, tag)
+    Database.add_tag(db, snippet_id, tag)
     return f"Tag {tag} added to snippet {snippet_id}"
 
 
 def export_code_snippets(export_choice, filename):
     if export_choice == 'all':
         # Export all snippets from the database to a file
-        Database.export_all(filename)
+        Database.export_all(db, filename)
         return "All code snippets exported successfully"
     elif export_choice.isdigit():
         # Export the specified snippet from the database to a file
         snippet_id = int(export_choice)
-        Database.export_snippet(snippet_id, filename)
+        Database.export_snippet(db, snippet_id, filename)
         return f"Code snippet {snippet_id} exported successfully"
     else:
         return "Invalid export choice"
@@ -72,7 +97,7 @@ def export_code_snippets(export_choice, filename):
 
 def import_code_snippets(filename):
     # Import snippets from the file to the database
-    Database.import_snippet(filename)
+    Database.import_snippet(db, filename)
     return f"Code snippets imported from {filename} successfully"
 
 
