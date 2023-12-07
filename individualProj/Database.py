@@ -68,8 +68,10 @@ class Database:
         with open("snippet.json", "r") as f:
             code_dict = json.load(f)
             snippet = code_dict[str(snippet_id)]
+
         with open(filename, "w") as f:
-            json.dump(snippet, f)
+            # Include the snippet_id in the exported object
+            json.dump({snippet_id: snippet}, f)
 
     def import_snippet(self, filename):
         with open(filename, "r") as f:

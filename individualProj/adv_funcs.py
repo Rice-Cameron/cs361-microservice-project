@@ -9,7 +9,6 @@ from send_recv import send_data, recv_data
 from Database import Database
 from time import sleep
 import socket
-import json
 import errno
 
 IP, APORT = 'localhost', 8124
@@ -86,6 +85,7 @@ def export_code_snippets(export_choice, filename):
         return f"Code snippet {snippet_id} exported successfully"
     else:
         return "Invalid export choice"
+
 
 def import_code_snippets(filename):
     # Import snippets from the file to the database
