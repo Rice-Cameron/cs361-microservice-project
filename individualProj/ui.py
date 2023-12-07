@@ -77,21 +77,23 @@ def exit_program():
 
 
 def display_main_menu():
-    print("-----------------------------------------------")
-    print("Welcome to Code Saver CLI: A Minimal Code Snippet Manager")
-    print("-----------------------------------------------")
-    print("\nAvailable Commands:")
-    print("- add                                                Add a new code snippet")
-    print("- view all                                           View list of all code snippets")
-    print("- view <id>                                          View details of a code snippet")
-    print("- edit <id> <title, lang, content, tags> <value>     Edit an existing code snippet")
-    print("- delete <all, id>                                   Delete all code snippets or just one")
-    print("- search <title, lang, content, tag> <value>         Search for a code snippet by passing the option and its value")
-    print("- tag <id> <tag>                                     sAdd tags to a code snippet")
-    print("- export <all, id> <filename>                        Export code snippets to a file")
-    print("- import <filename>                                  Import code snippets from a file")
-    print("- help                                               Show help menu")
-    print("- exit                                               Exit the program")
+    print("""
+-----------------------------------------------
+
+Available Commands:
+- add                                                Add a new code snippet
+- view all                                           View list of all code snippets
+- view <id>                                          View details of a code snippet
+- edit <id> <title, lang, content, tags> <value>     Edit an existing code snippet
+- delete <all, id>                                   Delete all code snippets or just one
+- search <title, lang, content, tags> <value>         Search for a code snippet by passing the option and its value
+- tag <id> <tag>                                     Add tags to a code snippet
+- export <all, id> <filename>                        Export code snippets to a file
+- import <filename>                                  Import code snippets from a file
+- help                                               Show help menu
+- exit                                               Exit the program
+-----------------------------------------------
+    """)
 
 
 def get_add_args():
@@ -108,6 +110,14 @@ def get_add_args():
     return payload
 
 
+def welcome():
+    print("""
+##########################################################
+Welcome to Code Saver CLI: A Minimal Code Snippet Manager
+##########################################################
+    """)
+
+
 def main():
     db = Database
     if not os.path.isfile("snippet.json"):
@@ -118,9 +128,9 @@ def main():
             data = f.read()
             if data:
                 db.code_snippets = json.loads(data)
-
-    display_main_menu()
+    welcome()
     while True:
+        display_main_menu()
         cmd = input("Enter command: ")
         sleep(3)
         if cmd == "add":
