@@ -67,13 +67,7 @@ def search_code_snippet(search_option, search_value):
              enumerate(response["snippets"])])
     else:
         return "Invalid search option"
-# def search_code_snippet(search_option, search_value):
-#     if search_option in ['title', 'lang', 'content', 'tag']:
-#         # Search the database for the snippet
-#         snippets = Database.search_snippets(db, search_option, search_value)
-#         return snippets
-#     else:
-#         return "Invalid search option"
+
 
 def tag_code_snippet(snippet_id, tag):
     # Add the tag to the snippet in the database
