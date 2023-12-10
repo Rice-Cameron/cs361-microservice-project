@@ -56,7 +56,7 @@ def main():
                 sleep(5)
                 command = recv_data(conn)
                 # Tokenize and check first part of command
-                print(command)
+                print(f"== Command received: {command}")
                 if not isinstance(command, dict):
                     command_token = command.split()[0]
                     if command_token in commands:
