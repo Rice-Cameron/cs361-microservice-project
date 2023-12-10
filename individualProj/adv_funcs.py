@@ -61,7 +61,7 @@ def search_code_snippet(search_option, search_value):
             })
 
         return f"{response['header']}\n" + "\n".join(
-            [f"{snippet_id}. Title: {snippet['title']}, lang: {snippet['lang']}, Content:{snippet['content']}" for snippet_id, snippet
+            [f"{snippet_id}. Title: {snippet['title']}, Language: {snippet['lang']}, Content:{snippet['content']}" for snippet_id, snippet
              in snippets.items()])
     else:
         return "Invalid search option"

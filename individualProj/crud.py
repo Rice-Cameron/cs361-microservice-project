@@ -87,8 +87,8 @@ def view_code_snippets(arg=None):
                 "tags": snippet["tags"]
             })
         return f"{response['header']}\n" + "\n".join(
-            [f"{i + 1}. {snippet['title']} {snippet['lang']} {snippet['content']}" for i, snippet in
-             enumerate(response["snippets"])])
+            [f"{snippet_id}. Title: {snippet['title']}, Language: {snippet['lang']}, Content: {snippet['content']}" for snippet_id, snippet in
+             db.code_snippets.items()])
     elif arg.isdigit():
         snippet_id = int(arg)
         snippet = Database.get_snippet(db, snippet_id)
@@ -99,7 +99,7 @@ def view_code_snippets(arg=None):
             "tags": snippet["tags"]
         })
         return f"{response['header']}\n" + "\n".join(
-            [f"{snippet_id}. Title: {snippet['title']}, lang: {snippet['lang']}, Content:{snippet['content']}" for i, snippet in
+            [f"{snippet_id}. Title: {snippet['title']}, Language: {snippet['lang']}, Content:{snippet['content']}" for snippet_id, snippet in
              enumerate(response["snippets"])])
 
     else:

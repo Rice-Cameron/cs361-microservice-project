@@ -1,1 +1,1 @@
-{"1": {"title": "Print", "lang": "python", "content": "print()", "tags": []}, "2": {"title": "add", "lang": "python", "content": "add()", "tags": ["testingList", "shouldHave2Tags"]}}
+{"1": {"title": "c++Print", "lang": "c++", "content": "cout << \"hi\";", "tags": "testingTags"}, "2": {"title": "testSearch", "lang": "c++", "content": "testing for search", "tags": ""}, "3": {"title": "importTest", "lang": "c++", "content": "test", "tags": ""}, "4": {"title": "testImport", "lang": "python", "content": "test", "tags": ""}}

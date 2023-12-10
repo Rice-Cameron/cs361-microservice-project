@@ -117,7 +117,8 @@ class Database:
             return json.dumps(code_dict)
 
     def export_all(self, filename):
-        # export all snippets to file named filename
         print("== Exporting all snippets to file")
+        with open("snippet.json", "r") as f:
+            code_dict = json.load(f)
         with open(filename, "w") as f:
-            json.dump(self.code_snippets, f)
+            json.dump(code_dict, f)
